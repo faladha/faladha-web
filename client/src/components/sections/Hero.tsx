@@ -2,9 +2,8 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Download, Calculator, ArrowLeft } from "lucide-react";
+import { Download, Smartphone, Calculator, ArrowLeft } from "lucide-react";
 import { useState } from "react";
-import AppToolsCards from "./AppToolsCards";
 
 export default function Hero() {
   const [lmpDate, setLmpDate] = useState("");
@@ -39,9 +38,9 @@ export default function Hero() {
 
   return (
     <section className="relative overflow-hidden" data-testid="section-hero">
-      <div className="absolute inset-0 bg-gradient-to-bl from-primary/12 via-pink-500/5 to-primary/8" />
+      <div className="absolute inset-0 bg-gradient-to-bl from-primary/10 via-background to-primary/5" />
       <div className="absolute top-20 start-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-10 end-10 w-96 h-96 bg-pink-400/8 rounded-full blur-3xl" />
+      <div className="absolute bottom-10 end-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 md:py-24">
         <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
@@ -123,7 +122,32 @@ export default function Hero() {
           </div>
 
           <div className="flex-1 flex justify-center">
-            <AppToolsCards />
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-primary/5 rounded-[2.5rem] blur-2xl scale-110" />
+              <div className="relative w-60 sm:w-72 animate-float" data-testid="phone-mockup">
+                <div className="bg-card border border-border/50 rounded-[2.5rem] p-3 shadow-xl">
+                  <div className="bg-gradient-to-b from-primary/90 to-primary rounded-[2rem] aspect-[9/16] flex flex-col items-center justify-center p-6">
+                    <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4">
+                      <Smartphone className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-white font-bold text-xl mb-2">فلذة</h3>
+                    <p className="text-white/80 text-sm text-center leading-relaxed">
+                      تطبيق متابعة الحمل الأشمل في العالم العربي
+                    </p>
+                    <div className="mt-6 space-y-2 w-full">
+                      <div className="bg-white/15 rounded-xl p-3">
+                        <p className="text-white/90 text-xs">حاسبة الحمل</p>
+                        <p className="text-white text-sm font-medium">احسبي موعد ولادتك</p>
+                      </div>
+                      <div className="bg-white/15 rounded-xl p-3">
+                        <p className="text-white/90 text-xs">نصيحة اليوم</p>
+                        <p className="text-white text-sm font-medium">اشربي 8 أكواب ماء</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
