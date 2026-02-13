@@ -23,11 +23,11 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ar_SA",
     siteName: SITE_NAME,
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/og-image.png"],
+    images: [`${SITE_URL}/og.png`],
   },
   alternates: {
     types: { "application/rss+xml": "/rss.xml" },

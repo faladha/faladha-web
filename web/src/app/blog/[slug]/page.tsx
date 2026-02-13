@@ -36,6 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       type: "article",
       publishedTime: post.publishedAt?.toISOString(),
       modifiedTime: post.updatedAt?.toISOString(),
+      images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630 }],
     },
   };
 }

@@ -33,6 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ weekSlug:
       title: `${title} | فلذة`,
       description: week.metaDescription || week.summary,
       url: `${SITE_URL}/pregnancy/${week.slug}`,
+      images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630 }],
     },
   };
 }

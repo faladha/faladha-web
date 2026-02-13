@@ -33,6 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: `${title} | فلذة`,
       description: symptom.metaDescription || symptom.summary,
       url: `${SITE_URL}/symptoms/${symptom.slug}`,
+      images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630 }],
     },
   };
 }

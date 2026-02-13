@@ -11,7 +11,7 @@ const BASE_URL = "https://faladha.com";
 const PgSession = connectPgSimple(session);
 
 const staticPages = [
-  "/", "/pregnancy", "/symptoms", "/tools/pregnancy-calculator", "/tools/due-date-calculator",
+  "/", "/pregnancy", "/symptoms", "/tools/pregnancy-calculator",
   "/blog", "/faq", "/download", "/about", "/medical-review",
   "/features", "/how-it-works", "/privacy", "/contact"
 ];
@@ -47,6 +47,15 @@ export async function registerRoutes(
       maxAge: cookieSettings.maxAge,
     });
   }
+
+  app.use("/admin", (_req, res, next) => {
+    res.setHeader("X-Robots-Tag", "noindex, nofollow");
+    next();
+  });
+  app.use("/api/admin", (_req, res, next) => {
+    res.setHeader("X-Robots-Tag", "noindex, nofollow");
+    next();
+  });
 
   app.use(session({
     store: new PgSession({

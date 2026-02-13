@@ -9,7 +9,6 @@ export function Footer() {
             <h3 className="font-bold text-foreground mb-3">أدوات الحمل</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="/tools/pregnancy-calculator" className="hover:text-foreground">حاسبة الحمل</Link></li>
-              <li><Link href="/tools/due-date-calculator" className="hover:text-foreground">حاسبة موعد الولادة</Link></li>
               <li><Link href="/pregnancy" className="hover:text-foreground">أسابيع الحمل</Link></li>
             </ul>
           </div>

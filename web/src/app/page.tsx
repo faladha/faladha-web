@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     title: "حاسبة الحمل الدقيقة بالهجري والميلادي | فلذة",
     description: "حاسبة الحمل بالهجري والميلادي - تابعي حملك أسبوعًا بأسبوع",
     url: SITE_URL,
+    images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630 }],
   },
 };
 

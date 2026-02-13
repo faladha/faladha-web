@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     title: "حاسبة الحمل الدقيقة بالهجري والميلادي - احسبي موعد ولادتك | فلذة",
     description: "احسبي موعد ولادتك المتوقع بدقة باستخدام حاسبة الحمل بالهجري والميلادي",
     url: `${SITE_URL}/tools/pregnancy-calculator`,
+    images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630 }],
   },
 };
 
