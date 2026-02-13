@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ weekSlug:
   return {
     title,
     description: week.metaDescription || week.summary,
-    alternates: { canonical: `/pregnancy/${week.slug}` },
+    alternates: { canonical: `${SITE_URL}/pregnancy/${week.slug}` },
     openGraph: {
       title: `${title} | فلذة`,
       description: week.metaDescription || week.summary,

@@ -4,6 +4,7 @@ import { Clock } from "lucide-react";
 import { getPublishedBlogPosts, getBlogPostsByCategory } from "@/lib/data";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
+import { SITE_URL } from "@/lib/constants";
 
 export const revalidate = 86400;
 
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${categoryName} - مدونة الحمل`,
     description: `مقالات في تصنيف ${categoryName} من مدونة فلذة`,
-    alternates: { canonical: `/blog/category/${slug}` },
+    alternates: { canonical: `${SITE_URL}/blog/category/${slug}` },
   };
 }
 

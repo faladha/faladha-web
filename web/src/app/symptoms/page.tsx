@@ -5,13 +5,14 @@ import { getPublishedSymptoms } from "@/lib/data";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
 import { MedicalDisclaimer } from "@/components/MedicalDisclaimer";
+import { SITE_URL } from "@/lib/constants";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: "أعراض الحمل الشائعة - دليلك الشامل",
   description: "تعرّفي على أعراض الحمل الشائعة وكيفية التعامل معها. معلومات طبية موثوقة عن غثيان الصباح، آلام الظهر، حرقة المعدة وغيرها.",
-  alternates: { canonical: "/symptoms" },
+  alternates: { canonical: `${SITE_URL}/symptoms` },
 };
 
 export default async function SymptomsPage() {

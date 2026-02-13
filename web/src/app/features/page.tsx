@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
+import { SITE_URL } from "@/lib/constants";
 import {
   Baby,
   Calendar,
@@ -17,7 +18,7 @@ import {
 export const metadata: Metadata = {
   title: "مميزات التطبيق - متابعة الحمل أسبوعيًا",
   description: "اكتشفي مميزات تطبيق فلذة: متابعة أسبوعية، حاسبة الحمل، نصائح طبية، تذكيرات، ومحتوى موثوق مراجع من أطباء متخصصين.",
-  alternates: { canonical: "/features" },
+  alternates: { canonical: `${SITE_URL}/features` },
 };
 
 const features = [

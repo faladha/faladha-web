@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
+import { SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "عن التطبيق - متابعة الحمل الشامل",
   description: "تعرّفي على فلذة، التطبيق العربي الأول لمتابعة الحمل بمعلومات طبية موثوقة ومراجعة من أطباء متخصصين.",
-  alternates: { canonical: "/about" },
+  alternates: { canonical: `${SITE_URL}/about` },
 };
 
 export default function AboutPage() {

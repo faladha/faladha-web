@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
+import { SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "كيف يعمل التطبيق - دليل الاستخدام",
   description: "تعرّفي على كيفية استخدام تطبيق فلذة لمتابعة حملك خطوة بخطوة. من التسجيل إلى المتابعة الأسبوعية.",
-  alternates: { canonical: "/how-it-works" },
+  alternates: { canonical: `${SITE_URL}/how-it-works` },
 };
 
 const steps = [

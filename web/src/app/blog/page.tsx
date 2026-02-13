@@ -4,13 +4,14 @@ import { Clock, Tag } from "lucide-react";
 import { getPublishedBlogPosts } from "@/lib/data";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
+import { SITE_URL } from "@/lib/constants";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: "مدونة الحمل والأمومة - مقالات طبية موثوقة",
   description: "مقالات متخصصة عن الحمل والولادة والأمومة. نصائح طبية موثوقة ومعلومات شاملة لكل حامل.",
-  alternates: { canonical: "/blog" },
+  alternates: { canonical: `${SITE_URL}/blog` },
 };
 
 export default async function BlogPage() {

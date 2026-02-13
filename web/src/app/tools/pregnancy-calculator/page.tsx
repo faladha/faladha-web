@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     absolute: "حاسبة الحمل الدقيقة بالهجري والميلادي - احسبي موعد ولادتك | فلذة",
   },
   description: "حاسبة الحمل بالهجري والميلادي الأكثر دقة. احسبي موعد الولادة المتوقع، عمر الحمل بالأسابيع والأيام، والثلث الحالي. تدعم التقويمين الهجري والميلادي.",
-  alternates: { canonical: "/tools/pregnancy-calculator" },
+  alternates: { canonical: `${SITE_URL}/tools/pregnancy-calculator` },
   openGraph: {
     title: "حاسبة الحمل الدقيقة بالهجري والميلادي - احسبي موعد ولادتك | فلذة",
     description: "احسبي موعد ولادتك المتوقع بدقة باستخدام حاسبة الحمل بالهجري والميلادي",

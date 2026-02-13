@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd, FAQJsonLd } from "@/components/JsonLd";
+import { SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "الأسئلة الشائعة عن الحمل والولادة",
   description: "إجابات على الأسئلة الأكثر شيوعًا حول الحمل والولادة وتطبيق فلذة. معلومات طبية موثوقة للأمهات.",
-  alternates: { canonical: "/faq" },
+  alternates: { canonical: `${SITE_URL}/faq` },
 };
 
 const faqItems = [

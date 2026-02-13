@@ -4,13 +4,14 @@ import { getPublishedWeeks } from "@/lib/data";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
 import { MedicalDisclaimer } from "@/components/MedicalDisclaimer";
+import { SITE_URL } from "@/lib/constants";
 
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: "أسابيع الحمل - دليلك الشامل للحمل أسبوعًا بأسبوع",
   description: "دليل شامل لأسابيع الحمل الأربعين. تعرّفي على تطور الجنين وتغيرات جسمك في كل أسبوع مع نصائح مخصصة.",
-  alternates: { canonical: "/pregnancy" },
+  alternates: { canonical: `${SITE_URL}/pregnancy` },
 };
 
 export default async function PregnancyPage() {
