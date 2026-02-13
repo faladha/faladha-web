@@ -1,51 +1,77 @@
 # فلذة (Faladha) - Arabic Pregnancy Tracking Website
 
 ## Overview
-A comprehensive Arabic pregnancy tracking website with SEO-optimized content, admin CMS dashboard, and PostgreSQL-backed content management. Built with Express + Vite + React, featuring full Arabic RTL support and a purple-themed UI.
+A comprehensive Arabic pregnancy tracking website with SEO-optimized content, admin CMS dashboard, and PostgreSQL-backed content management. Dual architecture: Next.js App Router (SSG/ISR) for public pages + Express + Vite + React for admin dashboard. Features full Arabic RTL support and a purple-themed UI.
 
 ## Current State
-- Fully functional website with 40 week-by-week pregnancy pages, 15 symptom pages, 10 blog articles
-- Pregnancy calculator supporting both Hijri and Gregorian calendars
-- SEO-optimized homepage with keyword-rich H2 sections and mini calculator
-- JSON-LD structured data on all pages (FAQ, Breadcrumb, WebApplication, Organization)
-- Sitemap at /sitemap.xml dynamically generated from database
-- RSS feed at /rss.xml for published blog posts
-- Admin CMS dashboard at /admin with authentication and RBAC
-- All content served from PostgreSQL database via public API
+- **Next.js frontend in /web**: All public pages migrated to Next.js App Router with SSG/ISR
+  - 40 week-by-week pregnancy pages (SSG with ISR revalidate=86400)
+  - 15 symptom pages (SSG with ISR)
+  - 10+ blog articles with category/tag pages (SSG with ISR)
+  - Pregnancy calculator with Hijri/Gregorian support (Server Component + Client Widget)
+  - Static pages: about, privacy, contact, faq, features, how-it-works, medical-review, download
+  - SEO: generateMetadata, JSON-LD, sitemap.ts, robots.ts, rss.xml route
+  - Revalidation API at /api/revalidate (protected by REVALIDATE_SECRET)
+- **Express backend**: Admin CMS dashboard at /admin, authentication, API
+- **Legacy client/**: Original Vite SPA (kept for admin, being deprecated for public pages)
+- All content served from PostgreSQL database
 
 ## Architecture
 
 ### Tech Stack
-- **Frontend**: React + Vite + TypeScript, Tailwind CSS, Shadcn UI, wouter (routing)
+- **Public Frontend (NEW)**: Next.js 16 App Router + TypeScript, Tailwind CSS, SSG/ISR
+- **Admin Frontend (legacy)**: React + Vite + TypeScript, Tailwind CSS, Shadcn UI, wouter
 - **Backend**: Express.js with session-based auth, bcryptjs, RBAC middleware
 - **Database**: PostgreSQL (Replit built-in) with Drizzle ORM
-- **Styling**: Purple theme (primary: hsl(265 85% 58%)), RTL layout, IBM Plex Sans Arabic font
+- **Styling**: Purple theme (primary: hsl(265 85% 58%)), RTL layout, IBM Plex Sans Arabic font (next/font)
 - **Auth**: express-session with connect-pg-simple, bcryptjs password hashing
 
 ### Project Structure
 ```
-client/src/
-  pages/
-    admin/          # Admin CMS pages (AdminLogin, AdminLayout, AdminDashboard, etc.)
-    Home.tsx, WeekDetail.tsx, SymptomDetail.tsx, BlogDetail.tsx, etc.
-  components/
-    layout/         # Header, Footer, Breadcrumbs
-    sections/       # Hero, Features, HowItWorks, Stats, Testimonials, CTABanner, FAQAccordion, MedicalDisclaimer
-    seo/            # JsonLd structured data components
-    ui/             # Shadcn UI components
-  data/             # Static content data (kept as reference, DB is source of truth)
-  lib/
-    queryClient.ts  # React Query setup with default fetcher
-    auth.tsx        # Auth context provider (useAuth hook)
+web/                          # NEW: Next.js App Router (public pages)
+  src/
+    app/
+      page.tsx                # Homepage (SSG/ISR)
+      layout.tsx              # Root layout (RTL, font, Header/Footer)
+      sitemap.ts              # Dynamic sitemap from DB
+      robots.ts               # robots.txt
+      not-found.tsx           # 404 page
+      rss.xml/route.ts        # RSS feed
+      api/revalidate/route.ts # ISR revalidation endpoint
+      pregnancy/
+        page.tsx              # Week listing (SSG/ISR)
+        [weekSlug]/page.tsx   # Week detail with generateStaticParams (SSG/ISR)
+      symptoms/
+        page.tsx              # Symptom listing (SSG/ISR)
+        [slug]/page.tsx       # Symptom detail (SSG/ISR)
+      blog/
+        page.tsx              # Blog listing (SSG/ISR)
+        [slug]/page.tsx       # Blog article (SSG/ISR)
+        category/[slug]/      # Category filter (SSG/ISR)
+        tag/[slug]/           # Tag filter (SSG/ISR)
+      tools/
+        pregnancy-calculator/ # Calculator (Server + Client components)
+      about/, faq/, privacy/, contact/, features/, download/,
+      how-it-works/, medical-review/   # Static pages
+    components/
+      Header.tsx, Footer.tsx, Breadcrumbs.tsx, JsonLd.tsx,
+      MedicalDisclaimer.tsx, PregnancyMiniCalculator.tsx, CalculatorWidget.tsx
+    lib/
+      db.ts                   # Drizzle + pg pool (reads from DATABASE_URL)
+      data.ts                 # Data access functions (getPublishedWeeks, etc.)
+      constants.ts            # SITE_URL, SITE_NAME, SITE_DESCRIPTION
+  next.config.js              # Rewrites to Express admin, Turbopack + webpack aliases
+  tailwind.config.ts          # Purple theme config
+  tsconfig.json               # Path aliases: @/* and @shared/*
+client/src/                   # LEGACY: Vite SPA (admin dashboard)
+  pages/admin/                # Admin CMS pages
+  components/, lib/, data/
 server/
-  routes.ts         # All API routes: auth, admin CRUD, public API, sitemap, RSS
-  storage.ts        # DatabaseStorage class with IStorage interface
-  auth.ts           # Auth middleware: requireAuth, requireAdmin, requireEditor
-  db.ts             # Drizzle + pg pool setup
-  seed.ts           # Database seeder (run with: npx tsx server/seed.ts)
-  vite.ts           # Vite dev server setup (DO NOT MODIFY)
+  routes.ts                   # API routes: auth, admin CRUD, public API
+  storage.ts                  # DatabaseStorage class
+  auth.ts, db.ts, seed.ts, vite.ts
 shared/
-  schema.ts         # Drizzle ORM schema for all 7 tables + Zod insert schemas
+  schema.ts                   # Drizzle ORM schema (shared between Next.js and Express)
 ```
 
 ### Database Tables
@@ -114,14 +140,23 @@ shared/
 - JSON-LD: FAQPage, BreadcrumbList, WebApplication, Organization, WebSite schemas
 - Sitemap dynamically generated from database with lastmod timestamps
 
+### Running the Project
+- **Current (Express + Vite)**: `npm run dev` starts Express on port 5000
+- **Next.js (public pages)**: `cd web && npx next dev -p 5000 --hostname 0.0.0.0`
+- **Both together**: `bash start-all.sh` (Express on 5001, Next.js on 5000)
+- **Build Next.js**: `cd web && npx next build`
+- **Vercel deployment**: Deploy /web with env vars: DATABASE_URL, REVALIDATE_SECRET, SITE_URL
+
 ### Important Notes
 - Hijri calendar conversion is done client-side (no external API)
 - All content is in Arabic with RTL support
 - Week data uses `weekNumber` field (not `week`)
-- The app binds to port 5000
+- Express app binds to port 5000 (legacy) or 5001 (when running with Next.js)
+- Next.js reads DB directly via shared/schema.ts (no API dependency for SSG)
 - Do NOT modify vite.ts, drizzle.config.ts, or package.json scripts
 - Database is the source of truth; static data files kept as reference only
 - Run `npx tsx server/seed.ts` to seed/reseed the database
+- Next.js rewrites /admin/* and /api/admin/* to Express on port 5001
 
 ## User Preferences
 - Purple color theme

@@ -1,0 +1,127 @@
+أنت Replit Agent خبير Next.js App Router + SEO 2026 + ISR + Drizzle/Postgres. 
+المطلوب: ترحيل الواجهة من Vite SPA (CSR) إلى Next.js App Router مع SSG/ISR بشكل احترافي جداً لرفع SEO. 
+لا تكسر السيرفر الحالي (Express) ولا الداشبورد ولا قاعدة البيانات. الهدف النهائي: كل صفحات المحتوى تصبح SSR/SSG/ISR وليس CSR.
+
+========================================================
+1) استراتيجية الترحيل (مهمة)
+========================================================
+- أنشئ تطبيق Next.js داخل نفس المشروع في مجلد جديد: /web
+- اترك /client و /server كما هي مؤقتاً (حتى ننقل تدريجياً).
+- الهدف: /web يصبح الواجهة الرسمية للنشر على Vercel لاحقاً.
+- استخدم TypeScript + Tailwind.
+- RTL عربي + next/font (IBM Plex Sans Arabic) بأوزان قليلة (3 فقط).
+
+========================================================
+2) ربط البيانات (أفضل خيار)
+========================================================
+اختر أحد حلّين:
+A) الأفضل: قراءة DB مباشرة من Next
+- استورد Drizzle schema من /shared/schema.ts
+- أنشئ ملف /web/src/server/db.ts يستخدم DATABASE_URL ويقرأ نفس Postgres
+- أنشئ دوال getPublishedWeeks/getWeekBySlug/getSymptoms/getBlogPost... الخ
+B) البديل: fetch من Express API الحالي /api/public/*
+- استخدم fetch server-side داخل Next وCache/ISR مضبوط
+
+اختر A إن أمكن لأنه أسرع وأقل اعتماد على API، مع الحفاظ على نفس قواعد النشر (published/status).
+
+========================================================
+3) Routes المطلوبة في Next (إجباري)
+========================================================
+أنشئ هذه الصفحات في /web/src/app:
+
+- /(marketing)/page.tsx                     => /
+- /tools/pregnancy-calculator/page.tsx      => أداة حاسبة الحمل (SSR أو SSG + client widget)
+- /pregnancy/page.tsx                       => قائمة 40 أسبوع (SSG/ISR)
+- /pregnancy/[weekSlug]/page.tsx            => week-1..40 (SSG/ISR)
+- /symptoms/page.tsx                        => قائمة الأعراض (SSG/ISR)
+- /symptoms/[slug]/page.tsx                 => تفاصيل العرض (SSG/ISR)
+- /blog/page.tsx                            => أرشيف المدونة (SSG/ISR)
+- /blog/[slug]/page.tsx                     => مقال (SSG/ISR)
+- /blog/category/[slug]/page.tsx            => تصنيف (SSG/ISR)
+- /blog/tag/[slug]/page.tsx                 => وسم (SSG/ISR)
+- /faq/page.tsx /about/page.tsx /privacy/page.tsx /download/page.tsx /medical-review/page.tsx /contact/page.tsx
+
+ملاحظة: لا تنقل admin الآن. خلي /admin على Express أو SPA مؤقتاً (أو نربطه subpath لاحقاً).
+
+========================================================
+4) SEO في Next (بديل useSeoMeta)
+========================================================
+- لا تستخدم useSeoMeta إطلاقاً داخل Next.
+- استخدم:
+  - export const metadata = {...} للصفحات الثابتة
+  - export async function generateMetadata(...) للصفحات الديناميكية (week/symptom/blog)
+- ضع canonical صحيح لكل صفحة.
+- OG/Twitter tags عبر metadata.
+- أضف JSON-LD server-rendered داخل كل صفحة (Script type="application/ld+json") بنفس الأنواع السابقة:
+  - Home: Organization + WebSite + WebPage + (إن لزم WebApplication)
+  - Tool: SoftwareApplication/WebApplication + FAQPage + BreadcrumbList
+  - Week/Blog: Article/BlogPosting + BreadcrumbList + FAQPage عند وجود FAQ
+  - Symptoms: MedicalWebPage + FAQPage + BreadcrumbList
+
+========================================================
+5) SSG/ISR + Cache strategy
+========================================================
+- Weeks/Symptoms/Blog: استخدم ISR عبر:
+  - export const revalidate = 86400 (يوم) كبداية
+  - واستخدم fetch cache tags أو db cache tags إن أمكن
+- عند أي تحديث محتوى من الداشبورد (Express):
+  - أضف Webhook endpoint في Next: /api/revalidate
+  - يُستدعى من السيرفر بعد publish/update
+  - يستخدم revalidatePath للروابط المتأثرة:
+    - /blog و /blog/[slug]
+    - /pregnancy و /pregnancy/[week]
+    - /symptoms و /symptoms/[slug]
+    - /tools/pregnancy-calculator
+    - / (إذا تتغير عناصر رئيسية)
+  - احمِ endpoint بسر REVALIDATE_SECRET
+
+========================================================
+6) Sitemap / RSS / Robots (داخل Next)
+========================================================
+- أنشئ:
+  - /web/src/app/sitemap.ts  (Next metadata sitemap) أو route handler /sitemap.xml
+  - /web/src/app/rss.xml/route.ts
+  - /web/src/app/robots.ts
+- يجب أن تشمل الروابط:
+  - الصفحات الثابتة
+  - 40 أسبوع
+  - أعراض منشورة
+  - مقالات منشورة
+  - tools
+- lastmod من updatedAt في DB.
+
+========================================================
+7) الأداء
+========================================================
+- قلل أوزان الخطوط إلى 3 (400/600/700)
+- لا تحمل shadcn UI بالكامل إن لم نستخدمه.
+- اجعل صفحات المحتوى Server Components قدر الإمكان.
+- حاسبة الحمل: واجهة الإدخال Client Component صغيرة داخل صفحة Server Component.
+
+========================================================
+8) Redirects & Canonicals
+========================================================
+- أضف redirects في next.config.js إذا كانت المسارات تختلف.
+- تأكد المسارات النهائية تطابق الحالية تماماً:
+  /tools/pregnancy-calculator
+  /pregnancy/week-20
+  /symptoms/morning-sickness
+  /blog/...
+لا تغيّر slugs.
+
+========================================================
+9) Deliverables
+========================================================
+بعد الانتهاء اطبع:
+1) شجرة /web
+2) قائمة Routes في Next + نوعها (SSG/ISR/SSR)
+3) مثال generateMetadata لصفحة week ومقال
+4) مثال JSON-LD فعلي
+5) ملف sitemap/robots/rss
+6) كيف أشغّل محلياً:
+   - تشغيل Express (server)
+   - تشغيل Next (web)
+7) خطوات النشر على Vercel (الواجهة فقط) مع env vars المطلوبة:
+   DATABASE_URL, REVALIDATE_SECRET, SITE_URL
+
+ابدأ التنفيذ الآن بدون أسئلة، وحافظ على نفس التصميم البنفسجي والأقسام الموجودة قدر الإمكان.
