@@ -1,16 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { Calculator, Calendar } from "lucide-react";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 export default function DueDateCalculator() {
-  useEffect(() => {
-    document.title = "حاسبة موعد الولادة المتوقع بالهجري والميلادي | فلذة";
-    const m = document.querySelector('meta[name="description"]');
-    if (m) m.setAttribute("content", "احسبي موعد ولادتك المتوقع بدقة بالتاريخ الهجري والميلادي. أدخلي تاريخ آخر دورة شهرية واحصلي على النتيجة فورًا.");
-  }, []);
+  useSeoMeta({
+    title: "حاسبة موعد الولادة المتوقع بالهجري والميلادي | فلذة",
+    description: "احسبي موعد ولادتك المتوقع بدقة بالتاريخ الهجري والميلادي. أدخلي تاريخ آخر دورة شهرية واحصلي على النتيجة فورًا.",
+    canonical: "/tools/due-date-calculator",
+    ogType: "website",
+  });
 
   const [lmpDate, setLmpDate] = useState("");
   const [result, setResult] = useState<{ dueDate: string; currentWeek: number; daysLeft: number } | null>(null);

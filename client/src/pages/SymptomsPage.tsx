@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import { Link } from "wouter";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
@@ -7,11 +7,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 
 export default function SymptomsPage() {
-  useEffect(() => {
-    document.title = "أعراض الحمل الشائعة: دليل شامل لكل الأعراض | فلذة";
-    const m = document.querySelector('meta[name="description"]');
-    if (m) m.setAttribute("content", "تعرفي على أعراض الحمل الشائعة من غثيان وتعب وآلام الظهر وغيرها. نصائح طبية للتخفيف من كل عرض ومتى تستشيرين الطبيبة.");
-  }, []);
+  useSeoMeta({
+    title: "أعراض الحمل الشائعة: دليل شامل لكل الأعراض | فلذة",
+    description: "تعرفي على أعراض الحمل الشائعة من غثيان وتعب وآلام الظهر وغيرها. نصائح طبية للتخفيف من كل عرض ومتى تستشيرين الطبيبة.",
+    canonical: "/symptoms",
+    ogType: "website",
+  });
 
   const { data: symptoms = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/public/symptoms"],

@@ -28,8 +28,13 @@ export function useSeoMeta({ title, description, canonical, ogType }: SeoMetaPro
     if (ogType) setMeta('meta[property="og:type"]', "content", ogType);
     if (canonical) {
       setMeta('meta[property="og:url"]', "content", `https://faladha.com${canonical}`);
-      const link = document.querySelector('link[rel="canonical"]');
-      if (link) link.setAttribute("href", `https://faladha.com${canonical}`);
+      let link = document.querySelector('link[rel="canonical"]');
+      if (!link) {
+        link = document.createElement("link");
+        link.setAttribute("rel", "canonical");
+        document.head.appendChild(link);
+      }
+      link.setAttribute("href", `https://faladha.com${canonical}`);
     }
   }, [title, description, canonical, ogType]);
 }

@@ -1,14 +1,15 @@
-import { useEffect } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import HowItWorks from "@/components/sections/HowItWorks";
 import CTABanner from "@/components/sections/CTABanner";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 export default function HowItWorksPage() {
-  useEffect(() => {
-    document.title = "كيف يعمل تطبيق فلذة لمتابعة الحمل | فلذة";
-    const m = document.querySelector('meta[name="description"]');
-    if (m) m.setAttribute("content", "تعرّفي على طريقة عمل تطبيق فلذة لمتابعة الحمل. خطوات بسيطة لبدء متابعة حملك أسبوعًا بأسبوع.");
-  }, []);
+  useSeoMeta({
+    title: "كيف يعمل تطبيق فلذة لمتابعة الحمل | فلذة",
+    description: "تعرّفي على طريقة عمل تطبيق فلذة لمتابعة الحمل. خطوات بسيطة لبدء متابعة حملك أسبوعًا بأسبوع.",
+    canonical: "/how-it-works",
+    ogType: "website",
+  });
 
   return (
     <div data-testid="page-how-it-works">

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, Calendar, User, ShieldCheck, BookOpen, ArrowLeft, List } from "lucide-react";
 import NotFound from "./not-found";
 import { useEffect, useState, useMemo } from "react";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 function TableOfContents({ headings }: { headings: { id: string; text: string; level: 2 | 3 }[] }) {
   const [activeId, setActiveId] = useState("");
@@ -110,13 +111,12 @@ export default function BlogDetail() {
       .slice(0, 3);
   }, [post, allPosts]);
 
-  useEffect(() => {
-    if (post) {
-      document.title = post.metaTitle;
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute("content", post.metaDescription);
-    }
-  }, [post]);
+  useSeoMeta({
+    title: post?.metaTitle ?? post?.meta_title ?? "",
+    description: post?.metaDescription ?? post?.meta_description ?? "",
+    canonical: post ? `/blog/${post.slug}` : undefined,
+    ogType: "article",
+  });
 
   if (isLoading) {
     return (

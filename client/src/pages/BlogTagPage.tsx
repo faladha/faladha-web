@@ -7,7 +7,8 @@ import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { Clock, Calendar } from "lucide-react";
 import NotFound from "./not-found";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 export default function BlogTagPage() {
   const params = useParams<{ tagSlug: string }>();
@@ -41,11 +42,12 @@ export default function BlogTagPage() {
 
   const currentTag = allTags.find(t => t.slug === tagSlug);
 
-  useEffect(() => {
-    if (currentTag) {
-      document.title = `${currentTag.name} - وسم | مدونة فلذة`;
-    }
-  }, [currentTag]);
+  useSeoMeta({
+    title: currentTag ? `${currentTag.name} - وسم | مدونة فلذة` : "",
+    description: currentTag ? `مقالات بوسم ${currentTag.name} في مدونة فلذة. محتوى طبي موثوق عن الحمل والأمومة.` : "",
+    canonical: currentTag ? `/blog/tag/${currentTag.slug}` : undefined,
+    ogType: "website",
+  });
 
   if (isLoading) {
     return (

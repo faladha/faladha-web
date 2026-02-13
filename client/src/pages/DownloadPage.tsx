@@ -1,16 +1,17 @@
-import { useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { SiApple, SiGoogleplay } from "react-icons/si";
 import { Download, Star, Shield, Smartphone } from "lucide-react";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 export default function DownloadPage() {
-  useEffect(() => {
-    document.title = "حمّلي تطبيق فلذة لمتابعة الحمل | فلذة";
-    const m = document.querySelector('meta[name="description"]');
-    if (m) m.setAttribute("content", "حمّلي تطبيق فلذة لمتابعة حملك أسبوعًا بأسبوع. متوفر على أندرويد وآيفون مع حاسبة الحمل وأدوات ذكية.");
-  }, []);
+  useSeoMeta({
+    title: "حمّلي تطبيق فلذة لمتابعة الحمل | فلذة",
+    description: "حمّلي تطبيق فلذة لمتابعة حملك أسبوعًا بأسبوع. متوفر على أندرويد وآيفون مع حاسبة الحمل وأدوات ذكية.",
+    canonical: "/download",
+    ogType: "website",
+  });
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8" data-testid="page-download">

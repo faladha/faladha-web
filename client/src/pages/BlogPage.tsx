@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,11 +12,12 @@ import { Clock, Calendar, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 export default function BlogPage() {
-  useEffect(() => {
-    document.title = "مدونة فلذة | مقالات الحمل والأمومة الطبية الموثوقة";
-    const m = document.querySelector('meta[name="description"]');
-    if (m) m.setAttribute("content", "مقالات متخصصة عن الحمل والأمومة مكتوبة بعناية ومراجعة من متخصصين. نصائح تغذية، تمارين، فحوصات، واستعداد للولادة.");
-  }, []);
+  useSeoMeta({
+    title: "مدونة فلذة | مقالات الحمل والأمومة الطبية الموثوقة",
+    description: "مقالات متخصصة عن الحمل والأمومة مكتوبة بعناية ومراجعة من متخصصين. نصائح تغذية، تمارين، فحوصات، واستعداد للولادة.",
+    canonical: "/blog",
+    ogType: "website",
+  });
 
   const { data: blogPosts = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/public/blog"],

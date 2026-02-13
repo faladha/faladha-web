@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Calculator, BookOpen, Download, CheckCircle } from "lucide-react";
-import { useEffect } from "react";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 const homeFAQ = [
   { question: "كيف أحسب حملي بحاسبة الحمل؟", answer: "أدخلي تاريخ أول يوم في آخر دورة شهرية في حاسبة الحمل، سواء بالتقويم الميلادي أو الهجري. ستحسب الأداة تلقائياً موعد الولادة المتوقع وعمر الحمل الحالي بالأسابيع والأيام والأشهر." },
@@ -50,11 +50,12 @@ export default function Home() {
     queryKey: ["/api/public/weeks"],
   });
 
-  useEffect(() => {
-    document.title = "حاسبة الحمل الدقيقة بالهجري والميلادي | متابعة الحمل أسبوعًا بأسبوع – فلذة";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "احسبي موعد الولادة بدقة باستخدام حاسبة الحمل بالهجري والميلادي، وتابعي تطور حملك أسبوعًا بأسبوع مع فلذة. أدوات ذكية وجداول أسابيع الحمل من 1 إلى 40.");
-  }, []);
+  useSeoMeta({
+    title: "حاسبة الحمل الدقيقة بالهجري والميلادي | متابعة الحمل أسبوعًا بأسبوع – فلذة",
+    description: "احسبي موعد الولادة بدقة باستخدام حاسبة الحمل بالهجري والميلادي، وتابعي تطور حملك أسبوعًا بأسبوع مع فلذة. أدوات ذكية وجداول أسابيع الحمل من 1 إلى 40.",
+    canonical: "/",
+    ogType: "website",
+  });
 
   return (
     <div data-testid="page-home">

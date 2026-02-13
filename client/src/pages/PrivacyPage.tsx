@@ -1,12 +1,13 @@
-import { useEffect } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 export default function PrivacyPage() {
-  useEffect(() => {
-    document.title = "سياسة الخصوصية | فلذة - متابعة الحمل";
-    const m = document.querySelector('meta[name="description"]');
-    if (m) m.setAttribute("content", "سياسة الخصوصية لتطبيق فلذة. تعرّفي على كيفية حماية بياناتك الشخصية وحقوقك كمستخدمة.");
-  }, []);
+  useSeoMeta({
+    title: "سياسة الخصوصية | فلذة - متابعة الحمل",
+    description: "سياسة الخصوصية لتطبيق فلذة. تعرّفي على كيفية حماية بياناتك الشخصية وحقوقك كمستخدمة.",
+    canonical: "/privacy",
+    ogType: "website",
+  });
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8" data-testid="page-privacy">

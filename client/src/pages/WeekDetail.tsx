@@ -1,6 +1,7 @@
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 import { Skeleton } from "@/components/ui/skeleton";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import FAQAccordion from "@/components/sections/FAQAccordion";
@@ -32,15 +33,13 @@ export default function WeekDetail() {
     return map;
   }, [allSymptoms]);
 
-  useEffect(() => {
-    if (week) {
-      document.title = week.metaTitle;
-      const meta = document.querySelector('meta[name="description"]');
-      if (meta) meta.setAttribute("content", week.metaDescription);
-      const canonical = document.querySelector('link[rel="canonical"]');
-      if (canonical) canonical.setAttribute("href", `https://faladha.com/pregnancy/${week.slug}`);
-    }
-  }, [week]);
+  const wn = week?.weekNumber ?? week?.week_number;
+  useSeoMeta({
+    title: week?.metaTitle ?? week?.meta_title ?? "",
+    description: week?.metaDescription ?? week?.meta_description ?? "",
+    canonical: week ? `/pregnancy/${week.slug}` : undefined,
+    ogType: "article",
+  });
 
   const isLoading = weekLoading || weeksLoading;
 
@@ -61,9 +60,10 @@ export default function WeekDetail() {
 
   if (weekError || !week) return <NotFound />;
 
-  const sortedWeeks = [...allWeeks].sort((a: any, b: any) => a.weekNumber - b.weekNumber);
-  const prev = week.weekNumber > 1 ? sortedWeeks.find((w: any) => w.weekNumber === week.weekNumber - 1) : null;
-  const next = week.weekNumber < 40 ? sortedWeeks.find((w: any) => w.weekNumber === week.weekNumber + 1) : null;
+  const getWn = (w: any) => w?.weekNumber ?? w?.week_number;
+  const sortedWeeks = [...allWeeks].sort((a: any, b: any) => getWn(a) - getWn(b));
+  const prev = wn > 1 ? sortedWeeks.find((w: any) => getWn(w) === wn - 1) : null;
+  const next = wn < 40 ? sortedWeeks.find((w: any) => getWn(w) === wn + 1) : null;
 
   const tips: string[] = Array.isArray(week.tips) ? week.tips : [];
 
@@ -73,13 +73,13 @@ export default function WeekDetail() {
       <BreadcrumbJsonLd items={[
         { name: "الرئيسية", url: "/" },
         { name: "أسابيع الحمل", url: "/pregnancy" },
-        { name: `الأسبوع ${week.weekNumber}`, url: `/pregnancy/${week.slug}` },
+        { name: `الأسبوع ${wn}`, url: `/pregnancy/${week.slug}` },
       ]} />
       <MedicalWebPageJsonLd title={week.metaTitle} description={week.metaDescription} url={`/pregnancy/${week.slug}`} />
       <FAQJsonLd items={week.faq || []} />
       <Breadcrumbs items={[
         { label: "أسابيع الحمل", href: "/pregnancy" },
-        { label: `الأسبوع ${week.weekNumber}` },
+        { label: `الأسبوع ${wn}` },
       ]} />
 
       <div className="flex items-center gap-2 mb-4 flex-wrap">
@@ -89,21 +89,21 @@ export default function WeekDetail() {
         {prev && (
           <Link href={`/pregnancy/${prev.slug}`}>
             <Button variant="ghost" size="sm" className="gap-1 text-xs" data-testid="button-prev-week">
-              <ArrowRight className="w-3 h-3" /> الأسبوع {prev.weekNumber}
+              <ArrowRight className="w-3 h-3" /> الأسبوع {getWn(prev)}
             </Button>
           </Link>
         )}
         {next && (
           <Link href={`/pregnancy/${next.slug}`}>
             <Button variant="ghost" size="sm" className="gap-1 text-xs" data-testid="button-next-week">
-              الأسبوع {next.weekNumber} <ArrowLeft className="w-3 h-3" />
+              الأسبوع {getWn(next)} <ArrowLeft className="w-3 h-3" />
             </Button>
           </Link>
         )}
       </div>
 
       <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3" data-testid="text-week-title">
-        الأسبوع {week.weekNumber} من الحمل: {week.title}
+        الأسبوع {wn} من الحمل: {week.title}
       </h1>
       <p className="text-muted-foreground leading-relaxed mb-8">{week.summary}</p>
 
@@ -199,7 +199,7 @@ export default function WeekDetail() {
       )}
 
       <section className="mb-8" data-testid="section-week-faq">
-        <h2 className="text-xl font-bold text-foreground mb-4">الأسئلة الشائعة - الأسبوع {week.weekNumber}</h2>
+        <h2 className="text-xl font-bold text-foreground mb-4">الأسئلة الشائعة - الأسبوع {wn}</h2>
         <FAQAccordion items={week.faq || []} />
       </section>
 
@@ -207,7 +207,7 @@ export default function WeekDetail() {
         {prev ? (
           <Link href={`/pregnancy/${prev.slug}`}>
             <Button variant="outline" className="gap-2" data-testid="button-nav-prev">
-              <ArrowRight className="w-4 h-4" /> الأسبوع {prev.weekNumber}
+              <ArrowRight className="w-4 h-4" /> الأسبوع {getWn(prev)}
             </Button>
           </Link>
         ) : <div />}
@@ -219,7 +219,7 @@ export default function WeekDetail() {
         {next ? (
           <Link href={`/pregnancy/${next.slug}`}>
             <Button variant="outline" className="gap-2" data-testid="button-nav-next">
-              الأسبوع {next.weekNumber} <ArrowLeft className="w-4 h-4" />
+              الأسبوع {getWn(next)} <ArrowLeft className="w-4 h-4" />
             </Button>
           </Link>
         ) : <div />}

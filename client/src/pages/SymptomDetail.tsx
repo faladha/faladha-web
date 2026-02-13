@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Lightbulb, HelpCircle, Calculator, BookOpen } from "lucide-react";
-import { useEffect } from "react";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 import NotFound from "./not-found";
 
 export default function SymptomDetail() {
@@ -23,13 +23,12 @@ export default function SymptomDetail() {
     enabled: !!slug,
   });
 
-  useEffect(() => {
-    if (symptom) {
-      document.title = symptom.metaTitle;
-      const meta = document.querySelector('meta[name="description"]');
-      if (meta) meta.setAttribute("content", symptom.metaDescription);
-    }
-  }, [symptom]);
+  useSeoMeta({
+    title: symptom?.metaTitle ?? symptom?.meta_title ?? "",
+    description: symptom?.metaDescription ?? symptom?.meta_description ?? "",
+    canonical: symptom ? `/symptoms/${symptom.slug}` : undefined,
+    ogType: "article",
+  });
 
   if (isLoading) {
     return (

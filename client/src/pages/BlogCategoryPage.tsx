@@ -7,7 +7,8 @@ import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { Clock, Calendar } from "lucide-react";
 import NotFound from "./not-found";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 export default function BlogCategoryPage() {
   const params = useParams<{ categorySlug: string }>();
@@ -38,11 +39,12 @@ export default function BlogCategoryPage() {
     return Array.from(catMap.values());
   }, [allPosts]);
 
-  useEffect(() => {
-    if (category) {
-      document.title = `${category.name} - مدونة فلذة | مقالات الحمل والأمومة`;
-    }
-  }, [category]);
+  useSeoMeta({
+    title: category ? `${category.name} - مدونة فلذة | مقالات الحمل والأمومة` : "",
+    description: category ? `مقالات عن ${category.name} في مدونة فلذة. نصائح طبية موثوقة ومعلومات شاملة عن الحمل والأمومة.` : "",
+    canonical: category ? `/blog/category/${category.slug}` : undefined,
+    ogType: "website",
+  });
 
   if (isLoading) {
     return (

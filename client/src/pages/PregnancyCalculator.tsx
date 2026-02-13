@@ -12,7 +12,7 @@ import MedicalDisclaimer from "@/components/sections/MedicalDisclaimer";
 import JsonLd, { BreadcrumbJsonLd, FAQJsonLd } from "@/components/seo/JsonLd";
 import { Calculator, Calendar, Baby, ArrowLeft, Download, Clock, BookOpen, Heart } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 function hijriToGregorian(year: number, month: number, day: number): Date {
   const jd = Math.floor((11 * year + 3) / 30) + 354 * year + 30 * month - Math.floor((month - 1) / 2) + day + 1948440 - 385;
@@ -104,11 +104,12 @@ export default function PregnancyCalculator() {
   const [hDay, setHDay] = useState("");
   const [result, setResult] = useState<CalculatorResult | null>(null);
 
-  useEffect(() => {
-    document.title = "حاسبة الحمل – احسبي موعد الولادة بالهجري والميلادي | فلذة";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", "حاسبة الحمل الدقيقة بالهجري والميلادي. احسبي موعد الولادة المتوقع، عمر الحمل بالأسابيع والأشهر، وتابعي حملك أسبوعًا بأسبوع مع جدول مفصل. أداة مجانية من فلذة.");
-  }, []);
+  useSeoMeta({
+    title: "حاسبة الحمل – احسبي موعد الولادة بالهجري والميلادي | فلذة",
+    description: "حاسبة الحمل الدقيقة بالهجري والميلادي. احسبي موعد الولادة المتوقع، عمر الحمل بالأسابيع والأشهر، وتابعي حملك أسبوعًا بأسبوع مع جدول مفصل. أداة مجانية من فلذة.",
+    canonical: "/tools/pregnancy-calculator",
+    ogType: "website",
+  });
 
   const calculate = () => {
     let lmp: Date;

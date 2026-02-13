@@ -1,14 +1,15 @@
-import { useEffect } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Features from "@/components/sections/Features";
 import CTABanner from "@/components/sections/CTABanner";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 export default function FeaturesPage() {
-  useEffect(() => {
-    document.title = "مزايا تطبيق فلذة لمتابعة الحمل | فلذة";
-    const m = document.querySelector('meta[name="description"]');
-    if (m) m.setAttribute("content", "اكتشفي مزايا تطبيق فلذة: حاسبة الحمل بالهجري والميلادي، متابعة أسبوعية، نصائح طبية، وتذكيرات الفحوصات.");
-  }, []);
+  useSeoMeta({
+    title: "مزايا تطبيق فلذة لمتابعة الحمل | فلذة",
+    description: "اكتشفي مزايا تطبيق فلذة: حاسبة الحمل بالهجري والميلادي، متابعة أسبوعية، نصائح طبية، وتذكيرات الفحوصات.",
+    canonical: "/features",
+    ogType: "website",
+  });
 
   return (
     <div data-testid="page-features">

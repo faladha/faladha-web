@@ -1,14 +1,15 @@
-import { useEffect } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { Card } from "@/components/ui/card";
 import { Heart, Target, Users, Shield } from "lucide-react";
+import { useSeoMeta } from "@/hooks/useSeoMeta";
 
 export default function AboutPage() {
-  useEffect(() => {
-    document.title = "عن فلذة | تطبيق متابعة الحمل الشامل";
-    const m = document.querySelector('meta[name="description"]');
-    if (m) m.setAttribute("content", "تعرّفي على فلذة، تطبيق متابعة الحمل الشامل في العالم العربي. رؤيتنا، فريقنا، وكيف نساعد الأمهات في رحلة الحمل.");
-  }, []);
+  useSeoMeta({
+    title: "عن فلذة | تطبيق متابعة الحمل الشامل",
+    description: "تعرّفي على فلذة، تطبيق متابعة الحمل الشامل في العالم العربي. رؤيتنا، فريقنا، وكيف نساعد الأمهات في رحلة الحمل.",
+    canonical: "/about",
+    ogType: "website",
+  });
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8" data-testid="page-about">
