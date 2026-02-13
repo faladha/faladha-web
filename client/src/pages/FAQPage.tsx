@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import FAQAccordion from "@/components/sections/FAQAccordion";
 
@@ -30,6 +31,12 @@ const faqCategories = [
 ];
 
 export default function FAQPage() {
+  useEffect(() => {
+    document.title = "الأسئلة الشائعة عن الحمل والولادة | فلذة";
+    const m = document.querySelector('meta[name="description"]');
+    if (m) m.setAttribute("content", "إجابات على أكثر الأسئلة شيوعًا عن الحمل والولادة والأمومة. معلومات طبية موثوقة من فريق فلذة المتخصص.");
+  }, []);
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8" data-testid="page-faq">
       <Breadcrumbs items={[{ label: "الأسئلة الشائعة" }]} />

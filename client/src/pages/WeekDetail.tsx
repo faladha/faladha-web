@@ -1,5 +1,6 @@
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import FAQAccordion from "@/components/sections/FAQAccordion";
@@ -23,6 +24,23 @@ export default function WeekDetail() {
   const { data: allWeeks = [], isLoading: weeksLoading } = useQuery<any[]>({
     queryKey: ["/api/public/weeks"],
   });
+
+  const { data: allSymptoms = [] } = useQuery<any[]>({ queryKey: ["/api/public/symptoms"] });
+  const symptomTitleMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    allSymptoms.forEach((s: any) => { map[s.slug] = s.title; });
+    return map;
+  }, [allSymptoms]);
+
+  useEffect(() => {
+    if (week) {
+      document.title = week.metaTitle;
+      const meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute("content", week.metaDescription);
+      const canonical = document.querySelector('link[rel="canonical"]');
+      if (canonical) canonical.setAttribute("href", `https://faladha.com/pregnancy/${week.slug}`);
+    }
+  }, [week]);
 
   const isLoading = weekLoading || weeksLoading;
 
@@ -172,7 +190,7 @@ export default function WeekDetail() {
             {(week.relatedSymptoms || []).map((slug: string) => (
               <Link key={slug} href={`/symptoms/${slug}`}>
                 <Badge variant="secondary" className="text-xs" data-testid={`badge-symptom-${slug}`}>
-                  {slug}
+                  {symptomTitleMap[slug] || slug}
                 </Badge>
               </Link>
             ))}

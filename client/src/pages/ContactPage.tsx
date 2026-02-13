@@ -1,8 +1,15 @@
+import { useEffect } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { Card } from "@/components/ui/card";
 import { Mail, MessageSquare, MapPin } from "lucide-react";
 
 export default function ContactPage() {
+  useEffect(() => {
+    document.title = "تواصلي معنا | فلذة - متابعة الحمل";
+    const m = document.querySelector('meta[name="description"]');
+    if (m) m.setAttribute("content", "تواصلي مع فريق فلذة لأي استفسار أو اقتراح. نحن هنا لمساعدتك في رحلة حملك.");
+  }, []);
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8" data-testid="page-contact">
       <Breadcrumbs items={[{ label: "تواصل معنا" }]} />

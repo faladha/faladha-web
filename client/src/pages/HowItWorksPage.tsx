@@ -1,8 +1,15 @@
+import { useEffect } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import HowItWorks from "@/components/sections/HowItWorks";
 import CTABanner from "@/components/sections/CTABanner";
 
 export default function HowItWorksPage() {
+  useEffect(() => {
+    document.title = "كيف يعمل تطبيق فلذة لمتابعة الحمل | فلذة";
+    const m = document.querySelector('meta[name="description"]');
+    if (m) m.setAttribute("content", "تعرّفي على طريقة عمل تطبيق فلذة لمتابعة الحمل. خطوات بسيطة لبدء متابعة حملك أسبوعًا بأسبوع.");
+  }, []);
+
   return (
     <div data-testid="page-how-it-works">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">

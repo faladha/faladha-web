@@ -1,8 +1,15 @@
+import { useEffect } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Features from "@/components/sections/Features";
 import CTABanner from "@/components/sections/CTABanner";
 
 export default function FeaturesPage() {
+  useEffect(() => {
+    document.title = "مزايا تطبيق فلذة لمتابعة الحمل | فلذة";
+    const m = document.querySelector('meta[name="description"]');
+    if (m) m.setAttribute("content", "اكتشفي مزايا تطبيق فلذة: حاسبة الحمل بالهجري والميلادي، متابعة أسبوعية، نصائح طبية، وتذكيرات الفحوصات.");
+  }, []);
+
   return (
     <div data-testid="page-features">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">

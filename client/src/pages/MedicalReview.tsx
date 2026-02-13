@@ -1,8 +1,15 @@
+import { useEffect } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { Card } from "@/components/ui/card";
 import { Shield, BookOpen, RefreshCw, Users } from "lucide-react";
 
 export default function MedicalReview() {
+  useEffect(() => {
+    document.title = "المراجعة الطبية | فلذة - محتوى طبي موثوق";
+    const m = document.querySelector('meta[name="description"]');
+    if (m) m.setAttribute("content", "كيف نضمن دقة المحتوى الطبي في فلذة. تعرّفي على عملية المراجعة الطبية والفريق المتخصص.");
+  }, []);
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8" data-testid="page-medical-review">
       <Breadcrumbs items={[{ label: "المراجعة الطبية" }]} />

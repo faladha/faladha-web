@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +7,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 
 export default function SymptomsPage() {
+  useEffect(() => {
+    document.title = "أعراض الحمل الشائعة: دليل شامل لكل الأعراض | فلذة";
+    const m = document.querySelector('meta[name="description"]');
+    if (m) m.setAttribute("content", "تعرفي على أعراض الحمل الشائعة من غثيان وتعب وآلام الظهر وغيرها. نصائح طبية للتخفيف من كل عرض ومتى تستشيرين الطبيبة.");
+  }, []);
+
   const { data: symptoms = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/public/symptoms"],
   });

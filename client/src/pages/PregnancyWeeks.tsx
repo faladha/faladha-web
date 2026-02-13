@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
@@ -18,6 +19,12 @@ const trimesterBadge: Record<number, string> = {
 };
 
 export default function PregnancyWeeks() {
+  useEffect(() => {
+    document.title = "أسابيع الحمل من الأول للأربعين | متابعة الحمل أسبوعًا بأسبوع – فلذة";
+    const m = document.querySelector('meta[name="description"]');
+    if (m) m.setAttribute("content", "تابعي تطور حملك أسبوعًا بأسبوع. معلومات مفصلة عن كل أسبوع من الأسبوع الأول حتى الأسبوع الأربعين، تطور الجنين، وأعراض الأم.");
+  }, []);
+
   const { data: weeks = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/public/weeks"],
   });
