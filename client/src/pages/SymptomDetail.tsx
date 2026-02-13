@@ -2,9 +2,15 @@ import { useParams, Link } from "wouter";
 import { getSymptom } from "@/data/symptoms";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import MedicalDisclaimer from "@/components/sections/MedicalDisclaimer";
+import FAQAccordion from "@/components/sections/FAQAccordion";
+import CTABanner from "@/components/sections/CTABanner";
+import { BreadcrumbJsonLd, FAQJsonLd } from "@/components/seo/JsonLd";
+import JsonLd from "@/components/seo/JsonLd";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, Lightbulb, HelpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AlertCircle, Lightbulb, HelpCircle, Calculator, BookOpen } from "lucide-react";
+import { useEffect } from "react";
 import NotFound from "./not-found";
 
 export default function SymptomDetail() {
@@ -12,77 +18,128 @@ export default function SymptomDetail() {
   const symptom = getSymptom(params.slug || "");
   if (!symptom) return <NotFound />;
 
+  useEffect(() => {
+    document.title = symptom.metaTitle;
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute("content", symptom.metaDescription);
+  }, [symptom]);
+
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "MedicalWebPage",
+    "name": symptom.title,
+    "description": symptom.metaDescription,
+    "url": `https://faladha.com/symptoms/${symptom.slug}`,
+    "inLanguage": "ar",
+    "medicalAudience": { "@type": "MedicalAudience", "audienceType": "Patient" },
+    "author": { "@type": "Organization", "name": "فلذة" },
+    "publisher": { "@type": "Organization", "name": "فلذة", "url": "https://faladha.com" }
+  };
+
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8" data-testid="page-symptom-detail">
-      <Breadcrumbs items={[
-        { label: "أعراض الحمل", href: "/symptoms" },
-        { label: symptom.title },
+    <div data-testid="page-symptom-detail">
+      <JsonLd data={articleJsonLd} />
+      <BreadcrumbJsonLd items={[
+        { name: "الرئيسية", url: "/" },
+        { name: "أعراض الحمل", url: "/symptoms" },
+        { name: symptom.title, url: `/symptoms/${symptom.slug}` },
       ]} />
+      {symptom.faq && symptom.faq.length > 0 && <FAQJsonLd items={symptom.faq} />}
 
-      <Badge variant="secondary" className="text-xs mb-4">{symptom.trimester}</Badge>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+        <Breadcrumbs items={[
+          { label: "أعراض الحمل", href: "/symptoms" },
+          { label: symptom.title },
+        ]} />
 
-      <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3" data-testid="text-symptom-title">
-        {symptom.title}
-      </h1>
-      <p className="text-muted-foreground leading-relaxed mb-8">{symptom.summary}</p>
+        <Badge variant="secondary" className="text-xs mb-4">{symptom.trimester}</Badge>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-          <HelpCircle className="w-5 h-5 text-primary" /> الأسباب
-        </h2>
-        <ul className="space-y-2.5">
-          {symptom.causes.map((c, i) => (
-            <li key={i} className="flex items-start gap-3 text-sm text-foreground leading-relaxed">
-              <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 shrink-0" /> {c}
-            </li>
-          ))}
-        </ul>
-      </section>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3" data-testid="text-symptom-title">
+          {symptom.title}
+        </h1>
+        <p className="text-muted-foreground leading-relaxed mb-8">{symptom.summary}</p>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-          <Lightbulb className="w-5 h-5 text-emerald-500" /> نصائح للتخفيف
-        </h2>
-        <ul className="space-y-2.5">
-          {symptom.remedies.map((r, i) => (
-            <li key={i} className="flex items-start gap-3 text-sm text-foreground leading-relaxed">
-              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0" /> {r}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-          <AlertCircle className="w-5 h-5 text-destructive" /> متى تستشيرين الطبيبة
-        </h2>
-        <Card className="p-5 border-destructive/20">
-          <ul className="space-y-2">
-            {symptom.whenToWorry.map((w, i) => (
+        <section className="mb-8">
+          <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+            <HelpCircle className="w-5 h-5 text-primary" /> الأسباب
+          </h2>
+          <ul className="space-y-2.5">
+            {symptom.causes.map((c, i) => (
               <li key={i} className="flex items-start gap-3 text-sm text-foreground leading-relaxed">
-                <span className="w-1.5 h-1.5 bg-destructive rounded-full mt-2 shrink-0" /> {w}
+                <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 shrink-0" /> {c}
               </li>
             ))}
           </ul>
-        </Card>
-      </section>
-
-      {symptom.relatedWeeks.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-lg font-bold text-foreground mb-4">أسابيع مرتبطة</h2>
-          <div className="flex flex-wrap gap-2">
-            {symptom.relatedWeeks.slice(0, 8).map(w => (
-              <Link key={w} href={`/pregnancy/week-${w}`}>
-                <Badge variant="secondary" className="text-xs" data-testid={`badge-week-${w}`}>
-                  الأسبوع {w}
-                </Badge>
-              </Link>
-            ))}
-          </div>
         </section>
-      )}
 
-      <MedicalDisclaimer />
+        <section className="mb-8">
+          <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+            <Lightbulb className="w-5 h-5 text-emerald-500" /> نصائح للتخفيف
+          </h2>
+          <ul className="space-y-2.5">
+            {symptom.remedies.map((r, i) => (
+              <li key={i} className="flex items-start gap-3 text-sm text-foreground leading-relaxed">
+                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0" /> {r}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 text-destructive" /> متى تستشيرين الطبيبة
+          </h2>
+          <Card className="p-5 border-destructive/20">
+            <ul className="space-y-2">
+              {symptom.whenToWorry.map((w, i) => (
+                <li key={i} className="flex items-start gap-3 text-sm text-foreground leading-relaxed">
+                  <span className="w-1.5 h-1.5 bg-destructive rounded-full mt-2 shrink-0" /> {w}
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </section>
+
+        {symptom.faq && symptom.faq.length > 0 && (
+          <section className="mb-8" data-testid="section-symptom-faq">
+            <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-primary" /> أسئلة شائعة
+            </h2>
+            <FAQAccordion items={symptom.faq} />
+          </section>
+        )}
+
+        {symptom.relatedWeeks.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-lg font-bold text-foreground mb-4">أسابيع مرتبطة</h2>
+            <div className="flex flex-wrap gap-2">
+              {symptom.relatedWeeks.slice(0, 8).map(w => (
+                <Link key={w} href={`/pregnancy/week-${w}`}>
+                  <Badge variant="secondary" className="text-xs" data-testid={`badge-week-${w}`}>
+                    الأسبوع {w}
+                  </Badge>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <Card className="p-5 mb-8 flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p className="text-sm font-medium text-foreground">هل تريدين حساب موعد ولادتك؟</p>
+            <p className="text-xs text-muted-foreground">استخدمي حاسبة الحمل لمعرفة أسبوعك الحالي وموعد الولادة المتوقع</p>
+          </div>
+          <Link href="/tools/pregnancy-calculator">
+            <Button size="sm" className="gap-1" data-testid="link-calculator-from-symptom">
+              <Calculator className="w-4 h-4" /> حاسبة الحمل
+            </Button>
+          </Link>
+        </Card>
+
+        <MedicalDisclaimer />
+      </div>
+
+      <CTABanner />
     </div>
   );
 }

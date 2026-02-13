@@ -88,7 +88,7 @@ const blogPostDescriptions: Record<string, string> = {
 };
 
 const staticPages = [
-  "/", "/pregnancy", "/symptoms", "/tools/due-date-calculator",
+  "/", "/pregnancy", "/symptoms", "/tools/pregnancy-calculator", "/tools/due-date-calculator",
   "/blog", "/faq", "/download", "/about", "/medical-review",
   "/features", "/how-it-works", "/privacy", "/contact"
 ];
@@ -119,7 +119,8 @@ Sitemap: ${BASE_URL}/sitemap.xml
     urls.push({ loc: "/", priority: "1.0", changefreq: "weekly" });
 
     staticPages.slice(1).forEach(p => {
-      urls.push({ loc: p, priority: "0.8", changefreq: "monthly" });
+      const priority = p === "/tools/pregnancy-calculator" ? "0.95" : "0.8";
+      urls.push({ loc: p, priority, changefreq: "monthly" });
     });
 
     weekSlugs.forEach(s => {

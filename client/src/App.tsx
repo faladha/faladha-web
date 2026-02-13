@@ -15,6 +15,7 @@ import BlogDetail from "@/pages/BlogDetail";
 import BlogCategoryPage from "@/pages/BlogCategoryPage";
 import BlogTagPage from "@/pages/BlogTagPage";
 import DueDateCalculator from "@/pages/DueDateCalculator";
+import PregnancyCalculator from "@/pages/PregnancyCalculator";
 import FAQPage from "@/pages/FAQPage";
 import DownloadPage from "@/pages/DownloadPage";
 import AboutPage from "@/pages/AboutPage";
@@ -47,6 +48,7 @@ function Router() {
       <Route path="/blog/category/:categorySlug" component={BlogCategoryPage} />
       <Route path="/blog/tag/:tagSlug" component={BlogTagPage} />
       <Route path="/blog/:slug" component={BlogDetail} />
+      <Route path="/tools/pregnancy-calculator" component={PregnancyCalculator} />
       <Route path="/tools/due-date-calculator" component={DueDateCalculator} />
       <Route path="/faq" component={FAQPage} />
       <Route path="/download" component={DownloadPage} />

@@ -7,7 +7,7 @@ const navLinks = [
   { href: "/", label: "الرئيسية" },
   { href: "/pregnancy", label: "أسابيع الحمل" },
   { href: "/symptoms", label: "الأعراض" },
-  { href: "/tools/due-date-calculator", label: "الأدوات" },
+  { href: "/tools/pregnancy-calculator", label: "حاسبة الحمل" },
   { href: "/blog", label: "المدونة" },
   { href: "/faq", label: "الأسئلة الشائعة" },
 ];

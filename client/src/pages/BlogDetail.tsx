@@ -71,7 +71,7 @@ export default function BlogDetail() {
   const relatedPosts = getRelatedPosts(post.slug, 3);
 
   const relatedWeekData = post.relatedWeeks
-    .map(w => weeks.find(wk => wk.week === w))
+    .map(w => weeks.find(wk => wk.weekNumber === w))
     .filter(Boolean)
     .slice(0, 6);
 
@@ -228,9 +228,9 @@ export default function BlogDetail() {
                 </h2>
                 <div className="flex flex-wrap gap-2">
                   {relatedWeekData.map(w => w && (
-                    <Link key={w.week} href={`/pregnancy/week-${w.week}`}>
+                    <Link key={w.weekNumber} href={`/pregnancy/week-${w.weekNumber}`}>
                       <Badge variant="outline" className="cursor-pointer text-xs">
-                        الأسبوع {w.week}
+                        الأسبوع {w.weekNumber}
                       </Badge>
                     </Link>
                   ))}
