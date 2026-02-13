@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const posts = await getBlogPostsByCategory(slug);
   const categoryName = posts[0]?.category || slug;
   return {
-    title: `${categoryName} - مدونة فلذة`,
+    title: `${categoryName} - مدونة الحمل`,
     description: `مقالات في تصنيف ${categoryName} من مدونة فلذة`,
     alternates: { canonical: `/blog/category/${slug}` },
   };

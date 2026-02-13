@@ -3,7 +3,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
-  title: "تحميل التطبيق - فلذة",
+  title: "تحميل التطبيق مجانًا",
   description: "حمّلي تطبيق فلذة مجانًا لمتابعة حملك أسبوعًا بأسبوع مع معلومات طبية موثوقة ونصائح مخصصة.",
   alternates: { canonical: "/download" },
 };

@@ -15,16 +15,22 @@ export async function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug }));
 }
 
+function stripBrand(title: string): string {
+  return title.replace(/\s*[||\-]\s*فلذة\s*$/u, "").trim();
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
   if (!post) return { title: "صفحة غير موجودة" };
+  const rawTitle = post.metaTitle || post.title;
+  const title = stripBrand(rawTitle);
   return {
-    title: post.metaTitle || post.title,
+    title,
     description: post.metaDescription || post.summary,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
-      title: post.metaTitle || post.title,
+      title: `${title} | فلذة`,
       description: post.metaDescription || post.summary,
       url: `${SITE_URL}/blog/${post.slug}`,
       type: "article",

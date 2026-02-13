@@ -8,7 +8,7 @@ import { BreadcrumbJsonLd } from "@/components/JsonLd";
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "مدونة فلذة - مقالات عن الحمل والأمومة",
+  title: "مدونة الحمل والأمومة - مقالات طبية موثوقة",
   description: "مقالات متخصصة عن الحمل والولادة والأمومة. نصائح طبية موثوقة ومعلومات شاملة لكل حامل.",
   alternates: { canonical: "/blog" },
 };

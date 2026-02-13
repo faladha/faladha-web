@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     ? posts[0].tags?.[posts[0].tagSlugs?.indexOf(slug) ?? -1] || slug
     : slug;
   return {
-    title: `${tagName} - مدونة فلذة`,
+    title: `${tagName} - مدونة الحمل`,
     description: `مقالات بوسم ${tagName} من مدونة فلذة`,
     alternates: { canonical: `/blog/tag/${slug}` },
   };

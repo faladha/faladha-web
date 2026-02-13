@@ -10,7 +10,9 @@ import { PregnancyMiniCalculator } from "@/components/PregnancyMiniCalculator";
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "حاسبة الحمل الدقيقة بالهجري والميلادي | فلذة - متابعة الحمل أسبوعًا بأسبوع",
+  title: {
+    absolute: "حاسبة الحمل الدقيقة بالهجري والميلادي | فلذة - متابعة الحمل أسبوعًا بأسبوع",
+  },
   description: "حاسبة الحمل بالهجري والميلادي - تابعي حملك أسبوعًا بأسبوع مع فلذة. احسبي موعد الولادة المتوقع، تعرّفي على تطور الجنين والأعراض في كل أسبوع مع معلومات طبية موثوقة.",
   alternates: { canonical: "/" },
   openGraph: {

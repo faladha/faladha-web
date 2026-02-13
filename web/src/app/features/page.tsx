@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "مميزات فلذة - تطبيق متابعة الحمل",
+  title: "مميزات التطبيق - متابعة الحمل أسبوعيًا",
   description: "اكتشفي مميزات تطبيق فلذة: متابعة أسبوعية، حاسبة الحمل، نصائح طبية، تذكيرات، ومحتوى موثوق مراجع من أطباء متخصصين.",
   alternates: { canonical: "/features" },
 };

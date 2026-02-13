@@ -3,7 +3,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
-  title: "عن فلذة - تطبيق متابعة الحمل الشامل",
+  title: "عن التطبيق - متابعة الحمل الشامل",
   description: "تعرّفي على فلذة، التطبيق العربي الأول لمتابعة الحمل بمعلومات طبية موثوقة ومراجعة من أطباء متخصصين.",
   alternates: { canonical: "/about" },
 };

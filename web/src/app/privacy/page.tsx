@@ -3,7 +3,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
-  title: "سياسة الخصوصية - فلذة",
+  title: "سياسة الخصوصية",
   description: "سياسة الخصوصية لتطبيق فلذة. تعرّفي على كيفية جمع واستخدام وحماية بياناتك الشخصية.",
   alternates: { canonical: "/privacy" },
 };

@@ -3,7 +3,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
-  title: "المراجعة الطبية - فلذة",
+  title: "المراجعة الطبية والمصادر العلمية",
   description: "تعرّفي على عملية المراجعة الطبية في فلذة وكيف نضمن دقة وموثوقية المحتوى الصحي المقدم للأمهات.",
   alternates: { canonical: "/medical-review" },
 };

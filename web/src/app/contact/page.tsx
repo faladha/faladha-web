@@ -3,7 +3,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
-  title: "اتصل بنا - فلذة",
+  title: "اتصل بنا",
   description: "تواصلي معنا لأي استفسار أو اقتراح. فريق فلذة جاهز لمساعدتك في أي وقت.",
   alternates: { canonical: "/contact" },
 };

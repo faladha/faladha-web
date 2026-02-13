@@ -3,7 +3,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BreadcrumbJsonLd, FAQJsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
-  title: "الأسئلة الشائعة - فلذة",
+  title: "الأسئلة الشائعة عن الحمل والولادة",
   description: "إجابات على الأسئلة الأكثر شيوعًا حول الحمل والولادة وتطبيق فلذة. معلومات طبية موثوقة للأمهات.",
   alternates: { canonical: "/faq" },
 };

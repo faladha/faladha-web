@@ -15,16 +15,22 @@ export async function generateStaticParams() {
   return weeks.map((w) => ({ weekSlug: w.slug }));
 }
 
+function stripBrand(title: string): string {
+  return title.replace(/\s*[||\-]\s*فلذة\s*$/u, "").trim();
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ weekSlug: string }> }): Promise<Metadata> {
   const { weekSlug } = await params;
   const week = await getWeekBySlug(weekSlug);
   if (!week) return { title: "صفحة غير موجودة" };
+  const rawTitle = week.metaTitle || week.title;
+  const title = stripBrand(rawTitle);
   return {
-    title: week.metaTitle || week.title,
+    title,
     description: week.metaDescription || week.summary,
     alternates: { canonical: `/pregnancy/${week.slug}` },
     openGraph: {
-      title: week.metaTitle || week.title,
+      title: `${title} | فلذة`,
       description: week.metaDescription || week.summary,
       url: `${SITE_URL}/pregnancy/${week.slug}`,
     },

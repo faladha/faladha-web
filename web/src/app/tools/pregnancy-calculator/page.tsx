@@ -6,11 +6,13 @@ import { SITE_URL, SITE_NAME } from "@/lib/constants";
 import { CalculatorWidget } from "@/components/CalculatorWidget";
 
 export const metadata: Metadata = {
-  title: "حاسبة الحمل الدقيقة بالهجري والميلادي - احسبي موعد ولادتك",
+  title: {
+    absolute: "حاسبة الحمل الدقيقة بالهجري والميلادي - احسبي موعد ولادتك | فلذة",
+  },
   description: "حاسبة الحمل بالهجري والميلادي الأكثر دقة. احسبي موعد الولادة المتوقع، عمر الحمل بالأسابيع والأيام، والثلث الحالي. تدعم التقويمين الهجري والميلادي.",
   alternates: { canonical: "/tools/pregnancy-calculator" },
   openGraph: {
-    title: "حاسبة الحمل الدقيقة بالهجري والميلادي | فلذة",
+    title: "حاسبة الحمل الدقيقة بالهجري والميلادي - احسبي موعد ولادتك | فلذة",
     description: "احسبي موعد ولادتك المتوقع بدقة باستخدام حاسبة الحمل بالهجري والميلادي",
     url: `${SITE_URL}/tools/pregnancy-calculator`,
   },

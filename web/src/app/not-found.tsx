@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "404 - الصفحة غير موجودة | فلذة",
+  title: "404 - الصفحة غير موجودة",
   description: "عذرًا، الصفحة التي تبحثين عنها غير موجودة أو تم نقلها.",
   robots: { index: false, follow: true },
 };

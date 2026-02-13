@@ -15,16 +15,22 @@ export async function generateStaticParams() {
   return symptoms.map((s) => ({ slug: s.slug }));
 }
 
+function stripBrand(title: string): string {
+  return title.replace(/\s*[||\-]\s*فلذة\s*$/u, "").trim();
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const symptom = await getSymptomBySlug(slug);
   if (!symptom) return { title: "صفحة غير موجودة" };
+  const rawTitle = symptom.metaTitle || symptom.title;
+  const title = stripBrand(rawTitle);
   return {
-    title: symptom.metaTitle || symptom.title,
+    title,
     description: symptom.metaDescription || symptom.summary,
     alternates: { canonical: `/symptoms/${symptom.slug}` },
     openGraph: {
-      title: symptom.metaTitle || symptom.title,
+      title: `${title} | فلذة`,
       description: symptom.metaDescription || symptom.summary,
       url: `${SITE_URL}/symptoms/${symptom.slug}`,
     },
