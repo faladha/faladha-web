@@ -1,0 +1,187 @@
+أنت Replit Agent خبير Technical SEO 2026 + Performance + Next.js. 
+المطلوب: نفّذ “SEO & Performance Full Audit” لموقع فلذة قبل الاعتماد النهائي، وقدّم تقرير شامل قابل للنسخ يوضح:
+- المشاكل (Critical / High / Medium / Low)
+- السبب
+- الأثر على الترتيب
+- طريقة الإصلاح (خطوات + ملفات + كود إن لزم)
+
+لا تفترض أن كل شيء صحيح. ابحث واكتشف المشاكل بنفسك.
+
+========================================================
+1) نطاق التدقيق (Coverage)
+========================================================
+افحص كل ما يلي:
+A) الصفحات الأساسية:
+- /
+- /tools/pregnancy-calculator
+- /pregnancy + عينة من weeks (1, 10, 20, 30, 40)
+- /symptoms + عينة من symptoms (5 صفحات)
+- /blog + عينة من 10 مقالات
+- /faq /features /download /about /medical-review /privacy /contact
+
+B) ملفات SEO:
+- /robots.txt
+- /sitemap.xml
+- /rss.xml
+- canonical tags
+- hreflang (حتى لو لغة واحدة، تأكد ما فيه خطأ)
+- OG/Twitter cards
+
+C) الأكواد والبنية:
+- App Router usage
+- SSG/ISR/SSR correctness
+- عدم وجود CSR-only على صفحات مهمة للسيو
+- عدم وجود أخطاء console أو hydration mismatch
+
+D) المحتوى والكلمات الدلالية:
+- تطابق Intent لكلمات: 
+  "حاسبة الحمل" 
+  "حاسبة حملي"
+  "حاسبة الحمل بالهجري"
+  "حاسبة الحمل بالميلادي"
+  "حاسبة الحمل بالأسابيع"
+  "حاسبة الحمل بالأسابيع والأشهر"
+  + "متابعة الحمل أسبوعًا بأسبوع"
+- فحص كثافة الكلمات بدون حشو
+- فحص التكرار في Titles/Descriptions/H1/H2 بين الصفحات
+
+========================================================
+2) اختبارات السرعة والأداء (Performance)
+========================================================
+نفّذ قياسات عملية (قدر الإمكان داخل بيئة التطوير/preview):
+- Lighthouse (Mobile) أو بدائل قياس مشابهة
+- Core Web Vitals تقديرية:
+  LCP, CLS, INP
+- TTFB للصفحات الرئيسية والأداة والمدونة
+- حجم JS bundle
+- عدد requests في الصفحة الرئيسية وأداة الحاسبة
+
+أخرج النتائج في جدول:
+Page | TTFB | LCP | CLS | JS KB | Requests | Status
+
+ثم فسّر أسباب أي ضعف:
+- صور غير محسنة
+- preload مفقود
+- font loading
+- excessive client JS
+- عدم وجود caching/ISR
+
+========================================================
+3) Technical SEO Checklist (2026)
+========================================================
+افحص وأبلغ عن:
+- وجود H1 واحد لكل صفحة
+- ترتيب H2/H3 صحيح
+- meta title <= ~60-65 حرف
+- meta description <= ~155-165 حرف
+- canonical صحيح (لا يشير لشيء خاطئ)
+- noindex/nofollow غير موجود بالخطأ
+- robots.txt يسمح بالزحف
+- sitemap.xml يحتوي كل الروابط المنشورة فعلاً:
+  - weeks 1..40
+  - symptoms المنشورة
+  - blog المنشور
+  - tools
+- lastmod صحيح (updatedAt)
+- pagination/filters (blog category/tag) لا تسبب صفحات مكررة بلا canonical
+- parameters في URL (إن وجدت) لا تُفهرس خطأ
+- 404/redirects: لا يوجد روابط مكسورة
+- OpenGraph images موجودة (حتى placeholders)
+
+========================================================
+4) Structured Data Audit (Schema)
+========================================================
+تحقق أن JSON-LD صحيح ومطابق:
+- Home: Organization + WebSite + WebPage
+- Tool page: SoftwareApplication/WebApplication + FAQPage + BreadcrumbList
+- Blog posts: BlogPosting/Article + BreadcrumbList (+ FAQPage لو موجود)
+- Week pages: Article + BreadcrumbList
+- Symptoms: MedicalWebPage + FAQPage + BreadcrumbList
+
+لكل نوع:
+- اعرض مثال JSON-LD الفعلي من الصفحة (قصير)
+- اكتشف أخطاء شائعة:
+  - missing @id
+  - wrong type
+  - missing headline/datePublished
+  - FAQ markup غير صحيح
+  - Breadcrumb urls غير مطابقة
+
+========================================================
+5) Content Quality & Duplicate/Thin Content
+========================================================
+نفّذ فحوصات آلية داخل المشروع:
+- قائمة كل الصفحات مع:
+  slug, title, description, wordCount, hasFAQ, hasTOC, internalLinksCount
+- اكتشف:
+  - صفحات أقل من 900 كلمة (للمقالات/الأسابيع)
+  - تكرار Titles/Descriptions
+  - FAQ مكرر نصياً بين عدة صفحات
+  - صفحات بلا روابط داخلية
+- اعرض النتائج في جدول + قائمة “Top 20 أخطر مشاكل محتوى”
+
+========================================================
+6) Internal Linking & Architecture
+========================================================
+افحص بنية الربط:
+- الصفحة الرئيسية تربط للحاسبة + /pregnancy + /symptoms + /blog
+- الحاسبة تربط للأسبوع الحالي + /pregnancy + أعراض رئيسية + مقالات
+- كل أسبوع يربط: السابق/التالي + 3 أعراض + مقالات + CTA
+- كل عرض symptom يربط: weeks مرتبطة + مقالات + CTA
+- كل مقال يربط: week/symptoms + مقالات مشابهة + CTA
+
+أخرج:
+- مخطط بسيط (نصي) للـ linking
+- اكتشف orphan pages (صفحات بدون أي inbound links)
+
+========================================================
+7) Blog Effectiveness Audit
+========================================================
+قيم المدونة:
+- هل المقالات مستهدفة long-tail فعلاً؟
+- هل هناك مقالات تدعم "حاسبة الحمل" (supporting cluster)؟
+- هل فئات/وسوم تسبب تكرار أو صفحات ضعيفة؟
+- هل RSS يعمل؟
+- هل صفحات /blog/category و /blog/tag لديها canonical وتجنبت thin content؟
+
+أخرج:
+- توصيات تحريرية: 10 مواضيع جديدة تعزز حاسبة الحمل + أسابيع الحمل
+- تحسينات على قوالب المقال (FAQ، TOC، Summary، CTA)
+
+========================================================
+8) Bugs & Code Issues
+========================================================
+افحص:
+- أخطاء Typescript/ESLint
+- Console errors
+- hydration mismatch
+- broken images
+- missing alt text
+- accessibility (basic)
+
+========================================================
+9) Output المطلوب (تقرير نهائي)
+========================================================
+أخرج تقرير منظم بهذا الشكل:
+
+1) Executive Summary (نقاط)
+2) Critical Issues (مع خطوات إصلاح)
+3) High Priority
+4) Medium
+5) Low
+6) Performance Table
+7) Content Quality Tables
+8) Schema Findings
+9) Internal Linking Findings
+10) Final Go/No-Go Checklist قبل الإطلاق
+
+========================================================
+10) مخرجات تقنية إضافية (إجباري)
+========================================================
+أنشئ سكريبتات داخل المشروع:
+- npm run audit:seo  (يجمع بيانات meta/wordcount/faq/links)
+- npm run audit:perf (يجمع bundle size + routes sizes)
+- npm run audit:links (يكتشف orphan pages)
+ثم شغّلها واطبع نتائجها في التقرير.
+
+ابدأ الآن. لا تسألني. افحص كل شيء بدقة وكن ناقداً.
