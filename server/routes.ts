@@ -21,21 +21,43 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
 
+  const isProduction = process.env.NODE_ENV === "production";
+
+  if (!process.env.SESSION_SECRET) {
+    if (isProduction) {
+      throw new Error("SESSION_SECRET environment variable is required in production");
+    }
+    console.warn("[WARN] SESSION_SECRET not set — using insecure fallback (development only)");
+  }
+
+  const sessionSecret = process.env.SESSION_SECRET || "faladha-dev-secret-do-not-use-in-prod";
+
+  const cookieSettings = {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: "lax" as const,
+    maxAge: 24 * 60 * 60 * 1000,
+  };
+
+  if (isProduction) {
+    console.log("[SESSION] Production cookie settings:", {
+      httpOnly: cookieSettings.httpOnly,
+      secure: cookieSettings.secure,
+      sameSite: cookieSettings.sameSite,
+      maxAge: cookieSettings.maxAge,
+    });
+  }
+
   app.use(session({
     store: new PgSession({
       pool: pool as any,
       tableName: "sessions",
       createTableIfMissing: false,
     }),
-    secret: process.env.SESSION_SECRET || "faladha-admin-secret-change-me",
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      maxAge: 24 * 60 * 60 * 1000,
-    },
+    cookie: cookieSettings,
   }));
 
   app.post("/api/auth/login", async (req, res) => {
