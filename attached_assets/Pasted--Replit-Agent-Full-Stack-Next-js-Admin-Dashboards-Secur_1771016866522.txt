@@ -1,0 +1,161 @@
+أنت Replit Agent خبير Full-Stack Next.js + Admin Dashboards + Security. 
+ابنِ “لوحة تحكم (Dashboard) احترافية” داخل مشروع فلذة للتحكم بالمحتوى (الصفحات، مقالات المدونة، صفحات الأسابيع 1-40، صفحات الأعراض، وأداة الحاسبة) — الهدف: أقدر أضيف/أعدل/أحذف المحتوى من لوحة واحدة بدون لمس الكود.
+
+أولوية العمل: (1) الأمان + (2) CRUD كامل + (3) تجربة استخدام ممتازة + (4) جاهزية SEO (تحديث sitemap/lastmod تلقائياً).
+
+========================================================
+A) القيود العامة
+========================================================
+- المشروع: Next.js App Router + TypeScript + Tailwind.
+- ممنوع استخدام خدمات خارجية مدفوعة أو معقدة.
+- استخدم Postgres إذا موجود، أو SQLite (Drizzle) إذا ما في DB، بحيث تشتغل على Replit بسهولة.
+- لا تكسر صفحات الموقع العامة ولا SEO.
+- المحتوى النهائي للموقع يجب أن يكون SSG/ISR أو Server Rendered بشكل صديق لقوقل (ليس CSR-only).
+
+========================================================
+B) الأمان (مهم جداً)
+========================================================
+1) اجعل الداشبورد خلف مسار:
+- /admin
+2) إضافة تسجيل دخول بسيط وآمن:
+- Login بالـ email + password (hash باستخدام bcrypt)
+- جلسات عبر HttpOnly cookies
+3) حماية كاملة لكل /admin routes و /api/admin/*
+- Middleware يمنع الوصول بدون جلسة
+4) أضف RBAC بسيط:
+- role: admin / editor
+- admin يقدر يحذف ويغير إعدادات
+- editor يقدر يضيف ويعدل فقط
+5) CSRF:
+- استخدم token بسيط أو SameSite cookies + POST only + origin checks
+
+========================================================
+C) ما الذي يجب أن تديره لوحة التحكم؟
+========================================================
+أنشئ جداول/نماذج إدارة لهذه الأنواع:
+
+1) Blog Posts
+- title, slug, description, content(MDX/Markdown), category, tags[], status(draft/published), publishedAt, updatedAt, coverImage(optional), seoTitle, seoDescription, canonical(optional), jsonLdExtras(optional)
+- توليد slug تلقائي + تحقق uniqueness
+- محرر محتوى (Markdown/MDX editor) داخل الداشبورد
+- Preview قبل النشر
+
+2) Pregnancy Weeks (1-40)
+- weekNumber (1..40), slug, title, metaTitle, metaDescription
+- summary, fetusSize, fetalDevelopment, motherSymptoms, tips, whenToCallDoctor, faq[], relatedSymptoms[]
+- status(draft/published), updatedAt
+- يمنع النشر إذا نقصت الأقسام الإلزامية
+- زر “Generate” يساعد على توليد قالب الأقسام (بدون محتوى منسوخ)
+
+3) Symptoms Pages
+- title, slug, description, content, faq[], relatedWeeks[], category, status, updatedAt
+- روابط داخلية للأسبوع/المقالات
+
+4) Tools Pages (Pregnancy Calculator)
+- نصوص الصفحة: h1, intro, sections, faq, seoTitle, seoDescription
+- إعدادات الحاسبة (اختيارات/نصوص) قابلة للتعديل
+
+5) Site Settings (إعدادات الموقع)
+- اسم الموقع
+- روابط App Store / Google Play
+- ألوان بسيطة (primary/secondary) إن وجدت
+- أرقام الإحصائيات في الصفحة الرئيسية (40 أسبوع، 100 مقال..)
+- نصوص CTA الرئيسية
+- Organization info للـ Schema (name/logo/url)
+
+========================================================
+D) تجربة المستخدم (Dashboard UI)
+========================================================
+1) Layout احترافي:
+- Sidebar (Weeks, Blog, Symptoms, Tools, Settings)
+- Topbar (Search, Create new, User menu)
+- Main content area
+2) لكل قائمة:
+- جدول بيانات مع: بحث، فلترة (status/category)، ترتيب، pagination
+- أزرار: New / Edit / Preview / Publish / Unpublish / Delete (بحسب الدور)
+3) محرر محتوى:
+- Markdown editor مع preview split view
+- زر إدراج “روابط داخلية” بسرعة (اختيار week/symptom/blog من dropdown وإدراج الرابط)
+4) Validation:
+- تظهر أخطاء واضحة قبل الحفظ/النشر (missing sections، طول قصير، slug مكرر)
+
+========================================================
+E) API & Database (CRUD)
+========================================================
+1) أنشئ Drizzle schema للجداول:
+- users, sessions
+- blog_posts
+- pregnancy_weeks
+- symptoms
+- tools_content
+- site_settings
+2) أنشئ REST/Route handlers تحت:
+- /api/admin/blog
+- /api/admin/weeks
+- /api/admin/symptoms
+- /api/admin/tools
+- /api/admin/settings
+مع:
+- GET list + filters
+- GET by id
+- POST create
+- PATCH update
+- DELETE remove
+3) تحقق من:
+- slug uniqueness
+- weekNumber uniqueness
+- status transitions
+
+========================================================
+F) الربط مع الموقع العام (Critical)
+========================================================
+الموقع العام يجب أن يقرأ المحتوى من قاعدة البيانات بدل ملفات /content إذا الداشبورد موجود.
+نفّذ استراتيجية “Hybrid”:
+- عند الطلب: Server fetch للمحتوى المنشور
+- أو ISR/Cache مع revalidate
+- صفحات weeks/blog/symptoms تبقى SEO friendly (SSR/SSG/ISR)
+- lastmod يتحدث عند النشر
+
+========================================================
+G) Sitemap / RSS / Robots (Auto Update)
+========================================================
+1) sitemap.xml يجب أن يسحب:
+- كل weeks المنشورة
+- كل blog المنشور
+- كل symptoms المنشورة
+- tools pages
+مع lastmod من updatedAt
+2) rss.xml من blog المنشور فقط
+3) robots.txt ثابت يشير للسيت ماب
+
+========================================================
+H) Quality Gates (إلزامي)
+========================================================
+أضف داخل الداشبورد “Content Health” صفحة:
+- /admin/health
+تعرض:
+- عدد الصفحات المنشورة/المسودة
+- صفحات ناقصة (بدون FAQ، بدون metaDescription، محتوى قصير)
+- Slugs مكررة (لازم تكون صفر)
+- Titles/Descriptions مكررة (لازم تكون صفر)
+وأضف سكريبت:
+- npm run validate:admin
+يطبع نفس التقرير
+
+========================================================
+I) Deliverables
+========================================================
+في النهاية اطبع:
+1) شجرة الملفات (admin + api + db)
+2) روابط صفحات الداشبورد
+3) بيانات دخول افتراضية (admin@example.com / ChangeMe123!) مع تنبيه لتغييرها
+4) شرح README:
+- إعداد DB
+- تشغيل migrations
+- إنشاء أول مستخدم admin
+- تشغيل المشروع
+- أين تتعدل صلاحيات المستخدم
+
+ابدأ التنفيذ الآن بدون أسئلة. 
+ركز على النظافة، الأمان، والـ UX. 
+لا تكسر الـ SEO ولا تغيّر المسارات العامة.

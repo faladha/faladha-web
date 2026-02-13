@@ -3,6 +3,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider, useAuth } from "@/lib/auth";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Home from "@/pages/Home";
@@ -25,6 +26,8 @@ import HowItWorksPage from "@/pages/HowItWorksPage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import ContactPage from "@/pages/ContactPage";
 import NotFound from "@/pages/not-found";
+import AdminLogin from "@/pages/admin/AdminLogin";
+import AdminLayout from "@/pages/admin/AdminLayout";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 
@@ -34,6 +37,32 @@ function ScrollToTop() {
     window.scrollTo(0, 0);
   }, [location]);
   return null;
+}
+
+function RedirectToLogin() {
+  const [, setLocation] = useLocation();
+  useEffect(() => {
+    setLocation("/admin/login");
+  }, [setLocation]);
+  return null;
+}
+
+function AdminGuard() {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" data-testid="admin-loading">
+        <div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <RedirectToLogin />;
+  }
+
+  return <AdminLayout />;
 }
 
 function Router() {
@@ -67,15 +96,24 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="min-h-screen flex flex-col">
-          <Header />
-          <main className="flex-1">
-            <ScrollToTop />
-            <Router />
-          </main>
-          <Footer />
-        </div>
-        <Toaster />
+        <AuthProvider>
+          <Switch>
+            <Route path="/admin/login" component={AdminLogin} />
+            <Route path="/admin/:rest*" component={AdminGuard} />
+            <Route path="/admin" component={AdminGuard} />
+            <Route>
+              <div className="min-h-screen flex flex-col">
+                <Header />
+                <main className="flex-1">
+                  <ScrollToTop />
+                  <Router />
+                </main>
+                <Footer />
+              </div>
+            </Route>
+          </Switch>
+          <Toaster />
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
