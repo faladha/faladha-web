@@ -1,10 +1,29 @@
 import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { symptoms } from "@/data/symptoms";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 
 export default function SymptomsPage() {
+  const { data: symptoms = [], isLoading } = useQuery<any[]>({
+    queryKey: ["/api/public/symptoms"],
+  });
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <Skeleton className="h-8 w-64 mb-4" />
+        <Skeleton className="h-5 w-96 mb-10" />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <Skeleton key={i} className="h-32 rounded-md" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8" data-testid="page-symptoms">
       <Breadcrumbs items={[{ label: "أعراض الحمل" }]} />
@@ -20,7 +39,7 @@ export default function SymptomsPage() {
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {symptoms.map(symptom => (
+        {symptoms.map((symptom: any) => (
           <Link key={symptom.slug} href={`/symptoms/${symptom.slug}`}>
             <Card className="p-5 hover-elevate h-full" data-testid={`card-symptom-${symptom.slug}`}>
               <Badge variant="secondary" className="text-[10px] mb-3">

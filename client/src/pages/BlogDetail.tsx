@@ -1,7 +1,6 @@
 import { useParams, Link } from "wouter";
-import { getBlogPost, getPostHeadings, getRelatedPosts, blogPosts } from "@/data/blog";
-import { weeks } from "@/data/weeks";
-import { symptoms } from "@/data/symptoms";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import MedicalDisclaimer from "@/components/sections/MedicalDisclaimer";
 import CTABanner from "@/components/sections/CTABanner";
@@ -11,7 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, Calendar, User, ShieldCheck, BookOpen, ArrowLeft, List } from "lucide-react";
 import NotFound from "./not-found";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 function TableOfContents({ headings }: { headings: { id: string; text: string; level: 2 | 3 }[] }) {
   const [activeId, setActiveId] = useState("");
@@ -64,21 +63,73 @@ function TableOfContents({ headings }: { headings: { id: string; text: string; l
 
 export default function BlogDetail() {
   const params = useParams<{ slug: string }>();
-  const post = getBlogPost(params.slug || "");
-  if (!post) return <NotFound />;
+  const slug = params.slug || "";
 
-  const headings = getPostHeadings(post);
-  const relatedPosts = getRelatedPosts(post.slug, 3);
+  const { data: post, isLoading, error } = useQuery<any>({
+    queryKey: ["/api/public/blog", slug],
+    enabled: !!slug,
+  });
 
-  const relatedWeekData = post.relatedWeeks
-    .map(w => weeks.find(wk => wk.weekNumber === w))
-    .filter(Boolean)
-    .slice(0, 6);
+  const { data: allPosts = [] } = useQuery<any[]>({
+    queryKey: ["/api/public/blog"],
+  });
 
-  const relatedSymptomData = post.relatedSymptoms
-    .map(s => symptoms.find(sym => sym.slug === s))
-    .filter(Boolean)
-    .slice(0, 6);
+  const { data: allSymptoms = [] } = useQuery<any[]>({
+    queryKey: ["/api/public/symptoms"],
+  });
+
+  const headings = useMemo(() => {
+    if (!post?.sections) return [];
+    return (post.sections as any[]).map((s: any) => ({
+      id: s.heading.replace(/\s+/g, "-").replace(/[^\u0600-\u06FF\w-]/g, ""),
+      text: s.heading,
+      level: s.headingLevel as 2 | 3,
+    }));
+  }, [post]);
+
+  const symptomTitleMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    allSymptoms.forEach((s: any) => { map[s.slug] = s.title; });
+    return map;
+  }, [allSymptoms]);
+
+  const relatedPosts = useMemo(() => {
+    if (!post || allPosts.length === 0) return [];
+    return allPosts
+      .filter((p: any) => p.slug !== post.slug)
+      .map((p: any) => {
+        let score = 0;
+        if (p.categorySlug === post.categorySlug) score += 3;
+        (p.tagSlugs || []).forEach((t: string) => {
+          if ((post.tagSlugs || []).includes(t)) score += 1;
+        });
+        return { ...p, score };
+      })
+      .filter((p: any) => p.score > 0)
+      .sort((a: any, b: any) => b.score - a.score)
+      .slice(0, 3);
+  }, [post, allPosts]);
+
+  useEffect(() => {
+    if (post) {
+      document.title = post.metaTitle;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute("content", post.metaDescription);
+    }
+  }, [post]);
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <Skeleton className="h-5 w-48 mb-4" />
+        <Skeleton className="h-8 w-96 mb-3" />
+        <Skeleton className="h-5 w-full mb-8" />
+        <Skeleton className="h-96 rounded-md" />
+      </div>
+    );
+  }
+
+  if (error || !post) return <NotFound />;
 
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -86,7 +137,7 @@ export default function BlogDetail() {
     "headline": post.title,
     "description": post.metaDescription,
     "url": `https://faladha.com/blog/${post.slug}`,
-    "datePublished": post.publishDate,
+    "datePublished": post.publishedAt || post.publishDate,
     "dateModified": post.updatedAt,
     "author": { "@type": "Organization", "name": post.author },
     "publisher": {
@@ -98,10 +149,10 @@ export default function BlogDetail() {
     "mainEntityOfPage": { "@type": "WebPage", "@id": `https://faladha.com/blog/${post.slug}` },
   };
 
-  const faqJsonLd = post.faqs.length > 0 ? {
+  const faqJsonLd = (post.faqs || []).length > 0 ? {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": post.faqs.map(f => ({
+    "mainEntity": post.faqs.map((f: any) => ({
       "@type": "Question",
       "name": f.question,
       "acceptedAnswer": { "@type": "Answer", "text": f.answer }
@@ -120,11 +171,7 @@ export default function BlogDetail() {
     "about": { "@type": "MedicalCondition", "name": "الحمل" }
   } : null;
 
-  useEffect(() => {
-    document.title = post.metaTitle;
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) metaDesc.setAttribute("content", post.metaDescription);
-  }, [post]);
+  const sections = post.sections || [];
 
   return (
     <div data-testid="page-blog-detail">
@@ -155,7 +202,7 @@ export default function BlogDetail() {
                 <Clock className="w-3 h-3" /> {post.readTime}
               </span>
               <span className="text-xs text-muted-foreground flex items-center gap-1">
-                <Calendar className="w-3 h-3" /> {post.publishDate}
+                <Calendar className="w-3 h-3" /> {post.publishedAt || post.publishDate}
               </span>
               <span className="text-xs text-muted-foreground flex items-center gap-1">
                 <User className="w-3 h-3" /> {post.author}
@@ -173,15 +220,15 @@ export default function BlogDetail() {
             <p className="text-muted-foreground leading-relaxed mb-8 text-base sm:text-lg">{post.summary}</p>
 
             <div className="flex flex-wrap gap-1.5 mb-8">
-              {post.tags.map((tag, i) => (
-                <Link key={i} href={`/blog/tag/${post.tagSlugs[i]}`}>
+              {(post.tags || []).map((tag: string, i: number) => (
+                <Link key={i} href={`/blog/tag/${(post.tagSlugs || [])[i]}`}>
                   <Badge variant="outline" className="text-[10px] cursor-pointer">{tag}</Badge>
                 </Link>
               ))}
             </div>
 
             <article className="prose prose-sm max-w-none" data-testid="blog-content">
-              {post.sections.map((section, si) => {
+              {sections.map((section: any, si: number) => {
                 const HeadingTag = section.headingLevel === 2 ? "h2" : "h3";
                 const headingId = headings[si]?.id || "";
                 return (
@@ -194,18 +241,18 @@ export default function BlogDetail() {
                     >
                       {section.heading}
                     </HeadingTag>
-                    {section.content.map((paragraph, pi) => (
+                    {(section.content || []).map((paragraph: string, pi: number) => (
                       <p key={pi} className="text-foreground leading-relaxed mb-4 text-sm">{paragraph}</p>
                     ))}
                   </section>
                 );
               })}
 
-              {post.faqs.length > 0 && (
+              {(post.faqs || []).length > 0 && (
                 <section className="mb-8" id="faq">
                   <h2 className="text-xl font-bold text-foreground mb-4 scroll-mt-24">الأسئلة الشائعة</h2>
                   <div className="space-y-4">
-                    {post.faqs.map((faq, fi) => (
+                    {post.faqs.map((faq: any, fi: number) => (
                       <Card key={fi} className="overflow-visible" data-testid={`faq-item-${fi}`}>
                         <div className="p-4">
                           <h3 className="font-semibold text-foreground text-sm mb-2">{faq.question}</h3>
@@ -220,17 +267,17 @@ export default function BlogDetail() {
 
             <MedicalDisclaimer />
 
-            {relatedWeekData.length > 0 && (
+            {(post.relatedWeeks || []).length > 0 && (
               <section className="mt-10 mb-8" data-testid="related-weeks">
                 <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
                   <BookOpen className="w-4 h-4" />
                   أسابيع الحمل المرتبطة
                 </h2>
                 <div className="flex flex-wrap gap-2">
-                  {relatedWeekData.map(w => w && (
-                    <Link key={w.weekNumber} href={`/pregnancy/week-${w.weekNumber}`}>
+                  {(post.relatedWeeks || []).slice(0, 6).map((w: number) => (
+                    <Link key={w} href={`/pregnancy/week-${w}`}>
                       <Badge variant="outline" className="cursor-pointer text-xs">
-                        الأسبوع {w.weekNumber}
+                        الأسبوع {w}
                       </Badge>
                     </Link>
                   ))}
@@ -238,17 +285,17 @@ export default function BlogDetail() {
               </section>
             )}
 
-            {relatedSymptomData.length > 0 && (
+            {(post.relatedSymptoms || []).length > 0 && (
               <section className="mb-8" data-testid="related-symptoms">
                 <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
                   <BookOpen className="w-4 h-4" />
                   الأعراض المرتبطة
                 </h2>
                 <div className="flex flex-wrap gap-2">
-                  {relatedSymptomData.map(s => s && (
-                    <Link key={s.slug} href={`/symptoms/${s.slug}`}>
+                  {(post.relatedSymptoms || []).slice(0, 6).map((slug: string) => (
+                    <Link key={slug} href={`/symptoms/${slug}`}>
                       <Badge variant="outline" className="cursor-pointer text-xs">
-                        {s.title}
+                        {symptomTitleMap[slug] || slug}
                       </Badge>
                     </Link>
                   ))}
@@ -260,7 +307,7 @@ export default function BlogDetail() {
               <section className="mt-10" data-testid="related-posts">
                 <h2 className="text-lg font-bold text-foreground mb-4">مقالات مشابهة</h2>
                 <div className="grid sm:grid-cols-3 gap-4">
-                  {relatedPosts.map(rp => (
+                  {relatedPosts.map((rp: any) => (
                     <Link key={rp.slug} href={`/blog/${rp.slug}`}>
                       <Card className="hover-elevate h-full overflow-visible" data-testid={`related-post-${rp.slug}`}>
                         <div className="p-4">
@@ -279,7 +326,7 @@ export default function BlogDetail() {
           </div>
 
           <div className="w-64 shrink-0">
-            <TableOfContents headings={[...headings, ...(post.faqs.length > 0 ? [{ id: "faq", text: "الأسئلة الشائعة", level: 2 as const }] : [])]} />
+            <TableOfContents headings={[...headings, ...((post.faqs || []).length > 0 ? [{ id: "faq", text: "الأسئلة الشائعة", level: 2 as const }] : [])]} />
           </div>
         </div>
       </div>

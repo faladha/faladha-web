@@ -11,7 +11,7 @@ import CTABanner from "@/components/sections/CTABanner";
 import MedicalDisclaimer from "@/components/sections/MedicalDisclaimer";
 import JsonLd, { BreadcrumbJsonLd, FAQJsonLd } from "@/components/seo/JsonLd";
 import { Calculator, Calendar, Baby, ArrowLeft, Download, Clock, BookOpen, Heart } from "lucide-react";
-import { weeks } from "@/data/weeks";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 function hijriToGregorian(year: number, month: number, day: number): Date {
@@ -93,6 +93,10 @@ interface CalculatorResult {
 }
 
 export default function PregnancyCalculator() {
+  const { data: weeks = [] } = useQuery<any[]>({
+    queryKey: ["/api/public/weeks"],
+  });
+
   const [calendarType, setCalendarType] = useState<"gregorian" | "hijri">("gregorian");
   const [gDate, setGDate] = useState("");
   const [hYear, setHYear] = useState("");

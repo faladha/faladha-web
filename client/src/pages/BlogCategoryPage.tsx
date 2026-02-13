@@ -1,23 +1,68 @@
 import { useParams, Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getCategoryBySlug, getPostsByCategory, categories } from "@/data/blog";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { Clock, Calendar } from "lucide-react";
 import NotFound from "./not-found";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 export default function BlogCategoryPage() {
   const params = useParams<{ categorySlug: string }>();
-  const category = getCategoryBySlug(params.categorySlug || "");
-  const posts = getPostsByCategory(params.categorySlug || "");
+  const categorySlug = params.categorySlug || "";
+
+  const { data: allPosts = [], isLoading } = useQuery<any[]>({
+    queryKey: ["/api/public/blog"],
+  });
+
+  const posts = useMemo(() =>
+    allPosts.filter((p: any) => p.categorySlug === categorySlug),
+    [allPosts, categorySlug]
+  );
+
+  const category = useMemo(() => {
+    const post = posts[0];
+    if (!post) return null;
+    return { name: post.category, slug: post.categorySlug, description: "" };
+  }, [posts]);
+
+  const categories = useMemo(() => {
+    const catMap = new Map<string, { name: string; slug: string }>();
+    allPosts.forEach((p: any) => {
+      if (p.categorySlug && !catMap.has(p.categorySlug)) {
+        catMap.set(p.categorySlug, { name: p.category, slug: p.categorySlug });
+      }
+    });
+    return Array.from(catMap.values());
+  }, [allPosts]);
 
   useEffect(() => {
     if (category) {
       document.title = `${category.name} - مدونة فلذة | مقالات الحمل والأمومة`;
     }
   }, [category]);
+
+  if (isLoading) {
+    return (
+      <div data-testid="page-blog-category">
+        <div className="bg-gradient-to-b from-primary/5 to-transparent py-10 md:py-14 mb-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <Skeleton className="h-8 w-48 mb-4" />
+            <Skeleton className="h-5 w-96" />
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-48 rounded-md" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!category) return <NotFound />;
 
@@ -38,9 +83,6 @@ export default function BlogCategoryPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3" data-testid="text-category-title">
             {category.name}
           </h1>
-          <p className="text-muted-foreground leading-relaxed max-w-3xl text-sm">
-            {category.description}
-          </p>
         </div>
       </div>
 
@@ -62,7 +104,7 @@ export default function BlogCategoryPage() {
         <p className="text-xs text-muted-foreground mb-4">{posts.length} مقال في هذا التصنيف</p>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {posts.map(post => (
+          {posts.map((post: any) => (
             <Link key={post.slug} href={`/blog/${post.slug}`}>
               <Card className="hover-elevate h-full overflow-visible" data-testid={`card-blog-${post.slug}`}>
                 <div className="p-5">
@@ -71,7 +113,7 @@ export default function BlogCategoryPage() {
                       <Clock className="w-3 h-3" /> {post.readTime}
                     </span>
                     <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                      <Calendar className="w-3 h-3" /> {post.publishDate}
+                      <Calendar className="w-3 h-3" /> {post.publishedAt || post.publishDate}
                     </span>
                   </div>
                   <h2 className="font-semibold text-foreground mb-2 text-sm leading-relaxed">{post.title}</h2>

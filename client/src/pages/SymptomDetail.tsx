@@ -1,5 +1,6 @@
 import { useParams, Link } from "wouter";
-import { getSymptom } from "@/data/symptoms";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import MedicalDisclaimer from "@/components/sections/MedicalDisclaimer";
 import FAQAccordion from "@/components/sections/FAQAccordion";
@@ -15,14 +16,34 @@ import NotFound from "./not-found";
 
 export default function SymptomDetail() {
   const params = useParams<{ slug: string }>();
-  const symptom = getSymptom(params.slug || "");
-  if (!symptom) return <NotFound />;
+  const slug = params.slug || "";
+
+  const { data: symptom, isLoading, error } = useQuery<any>({
+    queryKey: ["/api/public/symptoms", slug],
+    enabled: !!slug,
+  });
 
   useEffect(() => {
-    document.title = symptom.metaTitle;
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", symptom.metaDescription);
+    if (symptom) {
+      document.title = symptom.metaTitle;
+      const meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute("content", symptom.metaDescription);
+    }
   }, [symptom]);
+
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+        <Skeleton className="h-5 w-48 mb-4" />
+        <Skeleton className="h-8 w-96 mb-3" />
+        <Skeleton className="h-5 w-full mb-8" />
+        <Skeleton className="h-48 rounded-md mb-6" />
+        <Skeleton className="h-48 rounded-md" />
+      </div>
+    );
+  }
+
+  if (error || !symptom) return <NotFound />;
 
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -64,7 +85,7 @@ export default function SymptomDetail() {
             <HelpCircle className="w-5 h-5 text-primary" /> الأسباب
           </h2>
           <ul className="space-y-2.5">
-            {symptom.causes.map((c, i) => (
+            {(symptom.causes || []).map((c: string, i: number) => (
               <li key={i} className="flex items-start gap-3 text-sm text-foreground leading-relaxed">
                 <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 shrink-0" /> {c}
               </li>
@@ -77,7 +98,7 @@ export default function SymptomDetail() {
             <Lightbulb className="w-5 h-5 text-emerald-500" /> نصائح للتخفيف
           </h2>
           <ul className="space-y-2.5">
-            {symptom.remedies.map((r, i) => (
+            {(symptom.remedies || []).map((r: string, i: number) => (
               <li key={i} className="flex items-start gap-3 text-sm text-foreground leading-relaxed">
                 <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0" /> {r}
               </li>
@@ -91,7 +112,7 @@ export default function SymptomDetail() {
           </h2>
           <Card className="p-5 border-destructive/20">
             <ul className="space-y-2">
-              {symptom.whenToWorry.map((w, i) => (
+              {(symptom.whenToWorry || []).map((w: string, i: number) => (
                 <li key={i} className="flex items-start gap-3 text-sm text-foreground leading-relaxed">
                   <span className="w-1.5 h-1.5 bg-destructive rounded-full mt-2 shrink-0" /> {w}
                 </li>
@@ -109,11 +130,11 @@ export default function SymptomDetail() {
           </section>
         )}
 
-        {symptom.relatedWeeks.length > 0 && (
+        {(symptom.relatedWeeks || []).length > 0 && (
           <section className="mb-8">
             <h2 className="text-lg font-bold text-foreground mb-4">أسابيع مرتبطة</h2>
             <div className="flex flex-wrap gap-2">
-              {symptom.relatedWeeks.slice(0, 8).map(w => (
+              {(symptom.relatedWeeks || []).slice(0, 8).map((w: number) => (
                 <Link key={w} href={`/pregnancy/week-${w}`}>
                   <Badge variant="secondary" className="text-xs" data-testid={`badge-week-${w}`}>
                     الأسبوع {w}

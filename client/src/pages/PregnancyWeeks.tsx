@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
-import { weeks } from "@/data/weeks";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import CTABanner from "@/components/sections/CTABanner";
 
@@ -17,11 +18,34 @@ const trimesterBadge: Record<number, string> = {
 };
 
 export default function PregnancyWeeks() {
+  const { data: weeks = [], isLoading } = useQuery<any[]>({
+    queryKey: ["/api/public/weeks"],
+  });
+
   const grouped = [1, 2, 3].map(t => ({
     trimester: t,
     label: trimesterLabels[t],
-    weeks: weeks.filter(w => w.trimester === t),
+    weeks: weeks.filter((w: any) => w.trimester === t),
   }));
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <Skeleton className="h-8 w-64 mb-4" />
+        <Skeleton className="h-5 w-96 mb-10" />
+        {[1, 2, 3].map(i => (
+          <div key={i} className="mb-10">
+            <Skeleton className="h-6 w-48 mb-5" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {Array.from({ length: 10 }).map((_, j) => (
+                <Skeleton key={j} className="h-24 rounded-md" />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8" data-testid="page-pregnancy-weeks">
@@ -44,11 +68,11 @@ export default function PregnancyWeeks() {
             {label}
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {tw.map(week => (
+            {tw.map((week: any) => (
               <Link key={week.slug} href={`/pregnancy/${week.slug}`}>
                 <Card className="p-4 hover-elevate h-full" data-testid={`card-week-${week.weekNumber}`}>
                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${trimesterBadge[week.trimester]}`}>
-                    {week.fetusSize.comparison}
+                    {week.fetusSize?.comparison}
                   </span>
                   <p className="text-lg font-bold text-foreground mt-2 mb-1">الأسبوع {week.weekNumber}</p>
                   <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">{week.title}</p>

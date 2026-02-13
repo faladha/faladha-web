@@ -11,7 +11,8 @@ import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { weeks } from "@/data/weeks";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Calculator, BookOpen, Download, CheckCircle } from "lucide-react";
 import { useEffect } from "react";
 
@@ -45,6 +46,10 @@ const webAppJsonLd = {
 };
 
 export default function Home() {
+  const { data: weeks = [], isLoading } = useQuery<any[]>({
+    queryKey: ["/api/public/weeks"],
+  });
+
   useEffect(() => {
     document.title = "حاسبة الحمل الدقيقة بالهجري والميلادي | متابعة الحمل أسبوعًا بأسبوع – فلذة";
     const meta = document.querySelector('meta[name="description"]');
@@ -166,21 +171,29 @@ export default function Home() {
             <Badge variant="secondary" className="text-xs">الثلث الثالث: الأسابيع 28-40</Badge>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
-            {weeks.map((week) => (
-              <Link key={week.slug} href={`/pregnancy/${week.slug}`}>
-                <Card className="p-3 hover-elevate h-full" data-testid={`card-week-${week.weekNumber}`}>
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${trimesterColors[week.trimester]}`}>
-                      {week.trimester === 1 ? "الأول" : week.trimester === 2 ? "الثاني" : "الثالث"}
-                    </span>
-                  </div>
-                  <p className="text-sm font-bold text-foreground mb-0.5">الأسبوع {week.weekNumber}</p>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">{week.fetusSize.comparison}</p>
-                </Card>
-              </Link>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
+              {Array.from({ length: 20 }).map((_, i) => (
+                <Skeleton key={i} className="h-24 rounded-md" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
+              {weeks.map((week: any) => (
+                <Link key={week.slug} href={`/pregnancy/${week.slug}`}>
+                  <Card className="p-3 hover-elevate h-full" data-testid={`card-week-${week.weekNumber}`}>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${trimesterColors[week.trimester]}`}>
+                        {week.trimester === 1 ? "الأول" : week.trimester === 2 ? "الثاني" : "الثالث"}
+                      </span>
+                    </div>
+                    <p className="text-sm font-bold text-foreground mb-0.5">الأسبوع {week.weekNumber}</p>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">{week.fetusSize?.comparison}</p>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
