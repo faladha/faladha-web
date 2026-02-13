@@ -1,0 +1,189 @@
+أنت Replit Agent خبير “Next.js + Technical SEO 2026 + UI/UX”. ابني موقع فلذة (Faladha) هدفه الأول والأخير: تصدر Google وجلب زيارات عضوية ثم تحويلها لتحميل التطبيق. 
+لا أريد أي حلول سيو شكلية. أريد بنية + كود + صفحات + بيانات + سكيمات + سيت ماب + روبوتس + ميتا ممتازة 100%. 
+التصميم لازم يكون قريب جداً من الستايل الموجود في الصورة المرفقة (Landing Page بنفسجي/تدرجات/كروت/ظلال ناعمة/موك أب جوال/حركات خفيفة). لا تنسخ محتوى/أصول محمية، فقط نفس الفكرة والـ layout.
+
+========================================================
+A) STACK + قواعد صارمة
+========================================================
+1) Next.js (App Router) + TypeScript.
+2) Tailwind CSS فقط. بدون مكتبات UI ثقيلة.
+3) RTL عربي افتراضياً (dir="rtl")، مع دعم LTR لاحقاً بدون كسر.
+4) Fonts: next/font باستخدام خط عربي احترافي (IBM Plex Sans Arabic أو Noto Sans Arabic).
+5) Performance:
+   - لا تستخدم مكتبات تسبب JS ضخم.
+   - استخدم next/image و <Image> في كل الصور.
+   - Lazy loading للصور تحت الـ fold.
+   - لا تستخدم أي hotlink لصور خارجية.
+   - الهدف Lighthouse Mobile: Performance/SEO/BestPractices/Accessibility >= 90.
+6) Rendering:
+   - SSG لكل صفحات المحتوى (weeks/symptoms/blog/tools) قدر الإمكان.
+   - SSR فقط لما يلزم (مثلاً بحث داخلي).
+   - ممنوع بناء الموقع كـ CSR-only.
+7) Deployment Ready:
+   - المشروع لازم يكون “Vercel-ready” بالكامل.
+   - أضف إعدادات headers/caching المناسبة إن احتجنا (بدون مبالغة).
+
+========================================================
+B) SEO 2026 — المطلوب “محكم”
+========================================================
+نفّذ كل النقاط التالية بدون استثناء:
+
+1) Metadata لكل صفحة عبر generateMetadata():
+   - title فريد
+   - description فريد
+   - canonical صحيح
+   - openGraph + twitter
+   - alternates جاهزة (حتى لو لغة واحدة الآن)
+   - robots meta مضبوط
+
+2) URL Structure ثابتة:
+   - /pregnancy/week-1 ... /pregnancy/week-40
+   - /symptoms/[slug]
+   - /tools/due-date-calculator
+   - /blog/[slug]
+   - /faq /features /how-it-works /download /about /medical-review /privacy /contact
+
+3) Structured Data JSON-LD (Reusable Component):
+   - Organization + WebSite + WebPage للصفحة الرئيسية
+   - BreadcrumbList لكل الصفحات الداخلية
+   - Article لكل صفحات week و blog
+   - FAQPage في صفحات FAQ + داخل الأسابيع عند وجود FAQ
+   - SoftwareApplication أو MobileApplication لصفحة التحميل /download
+   - MedicalWebPage في صفحات المحتوى الطبية (بدون ادعاءات علاجية)
+
+4) ملفات SEO:
+   - /robots.txt يسمح بالفهرسة ويشير إلى /sitemap.xml
+   - /sitemap.xml ديناميكي أو مولّد وقت build (يدعم تجزئة لو كبر)
+   - /manifest.webmanifest + favicons + apple-touch-icon
+   - أضف security headers الأساسية بدون كسر الفهرسة
+
+5) Internal Linking (إلزامي):
+   - كل أسبوع يربط: السابق/التالي + 3 أعراض مرتبطة + أداة واحدة + CTA تحميل
+   - صفحة /pregnancy تجمع كل الأسابيع مع وصف قصير وروابط
+   - صفحة /symptoms تجمع الأعراض + تصنيفات + روابط
+   - Breadcrumb UI + Schema لكل الصفحات
+
+6) منع Thin/Duplicate Content (صارم):
+   - ممنوع تكرار العناوين أو الـ meta descriptions بين الصفحات.
+   - كل صفحة week لازم تحتوي محتوى مختلف فعلياً، ليس مجرد إعادة صياغة.
+   - “مُولّد المحتوى” يجب أن يضمن اختلاف: (الأرقام/الحقائق/النصائح/الأسئلة/الأعراض المرتبطة)
+   - أضف validator (سكريبت) يفحص:
+     - uniqueness للـ title/description
+     - طول المحتوى لكل صفحة (>= 900 كلمة)
+     - وجود أقسام إلزامية
+     - عدم تكرار FAQ نفس النص بين الأسابيع
+
+========================================================
+C) CONTENT ENGINE (Data-driven 100%)
+========================================================
+لا تكتب 40 صفحة يدوياً.
+
+1) أنشئ مصدر بيانات واحد:
+   - خيار مفضل: contentlayer + MDX أو ملفات JSON منظمة تحت /content
+2) أنشئ “Schema بيانات” للـ Week:
+   - slug: week-1
+   - weekNumber: 1..40
+   - title (فريد)
+   - metaTitle (فريد)
+   - metaDescription (فريد)
+   - summary (فريد)
+   - fetusSize (طول/وزن/تشبيه)
+   - fetalDevelopment (نقاط)
+   - motherSymptoms (نقاط)
+   - tips (غذاء/نوم/رياضة)
+   - whenToCallDoctor (تحذيرات)
+   - faq: 4-6 أسئلة/أجوبة فريدة
+   - relatedSymptoms: 3 روابط
+   - internalLinks: previous/next/tool/download
+3) أنشئ Seed حقيقي كبداية:
+   - جميع weeks 1..40 (محتوى عربي محترم + لا تكرر)
+   - 15 symptom pages كبداية
+   - 10 blog posts كبداية
+4) أضف Disclaimer طبي في كل صفحة محتوى: “معلومات إرشادية لا تغني عن الطبيب”.
+5) أضف قسم EEAT:
+   - /medical-review يوضح أن المحتوى مُراجع طبياً (بدون اختلاق أسماء إن لم تُعطَ؛ استخدم placeholders “فريق طبي” مع خيار تحديثه لاحقاً).
+   - /about يشرح الجهة والخبرة.
+
+========================================================
+D) PAGES & DESIGN (مطابق لفكرة الصورة)
+========================================================
+التصميم لازم يكون قريب جداً من الصورة:
+- ألوان: بنفسجي + تدرجات + خلفية فاتحة + أشكال دائرية خفيفة (blur blobs).
+- Cards: بيضاء، زوايا كبيرة، shadow ناعم.
+- Hero:
+  - H1 قوي: “فلذة | متابعة الحمل أسبوعًا بأسبوع”
+  - CTA buttons: تحميل من App Store / Google Play (placeholders)
+  - Phone mockup يمين/يسار (حسب RTL) مع float animation بسيط (يمين/يسار قليلاً).
+- Social proof section (أرقام/شعارات عامة placeholders).
+- Features grid (3-6 كروت مع icons SVG بسيطة).
+- App screenshots showcase (موك أب + خلفية gradient).
+- Stats section (40 أسبوع + أدوات + محتوى).
+- How it works (3 steps).
+- Testimonials (كروت).
+- Pricing (3 كروت) placeholder.
+- FAQ accordion نظيف وسريع.
+- Final CTA banner بنفسجي كبير + زر تحميل.
+- Footer: روابط + Newsletter form (بدون backend).
+- Responsive:
+  - Mobile first
+  - لا تكسر الأقسام
+  - CTA واضح
+  - تحسين قراءة العربية (line-height مناسب)
+
+========================================================
+E) IMPLEMENTATION DETAILS (لا تتجاهل)
+========================================================
+1) اعمل Components منظمة:
+- Header / Footer / Hero / FeatureCard / PhoneMockup / FAQAccordion / Testimonials / Pricing / CTASection
+- SEOJsonLd component
+- Breadcrumbs component
+- TableOfContents component
+
+2) اجعل صفحة week template واحدة:
+- /pregnancy/[slug] أو /pregnancy/week-[n]
+- توليد Static Params للأسبوع 1..40
+- نفس الشي للأعراض والمدونة
+
+3) Sitemap generation:
+- Include كل routes:
+  - static pages
+  - weeks 1..40
+  - symptoms
+  - blog
+  - tools
+- lastmod صحيح
+- priority و changefreq مناسبة
+
+4) Robots:
+- Allow all except:
+  - /api (إن وُجد)
+  - /_next
+- include sitemap link
+
+5) Accessibility:
+- headings hierarchy صحيح
+- alt text للصور
+- buttons واضحة
+
+========================================================
+F) DELIVERABLES — لازم تُسلّم
+========================================================
+- مشروع جاهز يشغل: npm install ثم npm run dev
+- لا أخطاء TypeScript/ESLint
+- README عربي واضح:
+  - تشغيل محلي
+  - build
+  - أين أعدّل المحتوى
+  - طريقة النشر على Vercel خطوة بخطوة
+- سكريبت Validator:
+  - npm run validate:seo
+  - يطبع تقرير uniqueness + word count + missing sections + duplicate FAQ
+- اكتب أمثلة محتوى عربية “خاصة بفلذة” (بدون نسخ من مواقع).
+- لا تغيّر البنية لتسوي “شكل” فقط: السيو أولاً مع UI ممتاز.
+
+ابدأ التنفيذ الآن واطبع لي في النهاية:
+1) شجرة الملفات
+2) قائمة الصفحات
+3) مثال على JSON-LD الذي تستخدمه
+4) نتيجة validate:seo
+5) تعليمات نشر Vercel
