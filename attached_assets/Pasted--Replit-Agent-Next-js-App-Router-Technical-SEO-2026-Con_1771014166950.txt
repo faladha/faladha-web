@@ -1,0 +1,130 @@
+أنت Replit Agent خبير Next.js App Router + Technical SEO 2026 + Content Architecture. 
+أضف “مدونة/مركز معرفة” داخل مشروع فلذة Next.js الحالي (أو أنشئ مشروع جديد إذا غير موجود) مع أفضل ممارسات SEO. 
+
+الهدف: تصدر نتائج Google عبر مقالات طويلة Long-tail مرتبطة بأسابيع الحمل + الأعراض + أدوات فلذة، مع بنية تمنع Thin/Duplicate content، وملفات sitemap/robots محكمة.
+
+========================
+A) Routes المطلوبة (Blog)
+========================
+1) /blog  (أرشيف المقالات + تصنيفات + بحث داخلي اختياري)
+2) /blog/[slug]  (صفحة المقال)
+3) /blog/category/[categorySlug]  (صفحة تصنيف)
+4) /blog/tag/[tagSlug]  (صفحة وسم)
+5) /rss.xml  (RSS feed للمدونة)
+6) دمج كامل في /sitemap.xml (يشمل المقالات/التصنيفات/الوسوم)
+
+========================
+B) Rendering & Performance
+========================
+- استخدم SSG للمقالات (generateStaticParams).
+- لا تستخدم CSR-only.
+- استخدم next/image للصور داخل المقال.
+- استعمل next/font لخط عربي.
+- أضف Table of Contents تلقائي داخل المقال (بناء على H2/H3) مع روابط Anchors.
+- أضف Breadcrumbs UI + BreadcrumbList schema.
+
+========================
+C) Content System (Data-driven)
+========================
+- المحتوى يُدار من /content/blog/*.mdx (أو MDX + frontmatter).
+- Frontmatter إلزامي:
+  - title
+  - slug
+  - description
+  - date
+  - updatedAt
+  - category (واحد)
+  - tags (مصفوفة)
+  - relatedWeeks: [1..40] (اختياري)
+  - relatedSymptoms: [slug] (اختياري)
+  - readingTime (تحسب تلقائياً)
+  - author (placeholder)
+  - medicalReviewed: true/false (placeholder)
+- أنشئ Seeds: 10 مقالات عربية كبداية (محتوى أصلي، غير منسوخ).
+- أنشئ خريطة categories مبدئية:
+  - أعراض الحمل
+  - تغذية الحامل
+  - نوم وراحة
+  - فحوصات وتحاليل
+  - الولادة والاستعداد
+  - أسئلة شائعة
+
+========================
+D) SEO 2026 (إجباري)
+========================
+1) Metadata لكل مقال:
+- Title فريد + Description فريد
+- canonical صحيح
+- OG/Twitter
+- robots meta
+
+2) Structured Data JSON-LD للمقال:
+- Article (أو BlogPosting)
+- BreadcrumbList
+- FAQPage إذا المقال فيه FAQ section
+- MedicalWebPage (بدون ادعاءات علاجية)
+
+3) Internal Linking (إجباري)
+داخل كل مقال أضف قسمين في النهاية:
+- "مرتبط بالأسبوع": روابط للـ weeks ذات الصلة (إن وُجد)
+- "مرتبط بالأعراض": روابط symptom pages ذات الصلة
++ روابط “مقالات مشابهة” (3 روابط) مبنية على tags/category.
+
+4) RSS:
+- /rss.xml يعرض آخر 20 مقال (title, link, description, date)
+
+5) Sitemap:
+- تحديث /sitemap.xml ليشمل:
+  - /blog
+  - كل /blog/[slug]
+  - /blog/category/[categorySlug]
+  - /blog/tag/[tagSlug]
+مع lastmod صحيح.
+
+6) Robots:
+- /robots.txt يسمح للـ blog ويشير للسيت ماب.
+
+========================
+E) Quality Gate (Validator Script)
+========================
+أضف سكريبت: npm run validate:content
+يفحص:
+- وجود كل حقول frontmatter
+- uniqueness للـ title/description
+- طول المقال >= 900 كلمة (حد أدنى)
+- وجود H2 على الأقل 4
+- وجود FAQ 4 أسئلة على الأقل في المقالات التي تستهدف أسئلة مباشرة
+- وجود 3 روابط داخلية على الأقل (weeks/symptoms/blog)
+
+يطبع تقرير واضح في الـ console.
+
+========================
+F) UI/UX (مطابق لستايل اللاندنق)
+========================
+- نفس ثيم فلذة: بنفسجي/تدرجات/كروت/ظلال ناعمة مثل الصورة المرجعية.
+- صفحة /blog فيها:
+  - Hero صغير + وصف
+  - قائمة مقالات بكروت (عنوان/وصف/تاريخ/مدة قراءة)
+  - فلتر حسب Category + Tags
+- صفحة المقال:
+  - عنوان + وصف + تاريخ + مدة قراءة
+  - Table of contents مثبت على الديسكتوب (sticky)
+  - محتوى MDX منظم
+  - "مقالات مشابهة" + "روابط للأسابيع/الأعراض" في النهاية
+  - CTA تحميل التطبيق (Banner)
+
+========================
+G) Deliverables
+========================
+- شجرة ملفات واضحة
+- 10 مقالات seed
+- validate:content يعمل بدون أخطاء
+- sitemap/robots/rss يعملون
+- شرح في README: أين أكتب المقالات وكيف أضيفها
+
+ابدأ التنفيذ الآن واطبع في النهاية:
+1) file tree
+2) مثال frontmatter
+3) مثال JSON-LD للمقال
+4) نتيجة validate:content
+5) روابط الصفحات التي تم إنشاؤها

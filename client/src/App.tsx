@@ -12,6 +12,8 @@ import SymptomsPage from "@/pages/SymptomsPage";
 import SymptomDetail from "@/pages/SymptomDetail";
 import BlogPage from "@/pages/BlogPage";
 import BlogDetail from "@/pages/BlogDetail";
+import BlogCategoryPage from "@/pages/BlogCategoryPage";
+import BlogTagPage from "@/pages/BlogTagPage";
 import DueDateCalculator from "@/pages/DueDateCalculator";
 import FAQPage from "@/pages/FAQPage";
 import DownloadPage from "@/pages/DownloadPage";
@@ -42,6 +44,8 @@ function Router() {
       <Route path="/symptoms" component={SymptomsPage} />
       <Route path="/symptoms/:slug" component={SymptomDetail} />
       <Route path="/blog" component={BlogPage} />
+      <Route path="/blog/category/:categorySlug" component={BlogCategoryPage} />
+      <Route path="/blog/tag/:tagSlug" component={BlogTagPage} />
       <Route path="/blog/:slug" component={BlogDetail} />
       <Route path="/tools/due-date-calculator" component={DueDateCalculator} />
       <Route path="/faq" component={FAQPage} />
