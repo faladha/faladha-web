@@ -1,6 +1,6 @@
 import { db } from "./db";
 import { eq, desc, asc } from "drizzle-orm";
-import { pregnancyWeeks, symptomsTable, blogPosts } from "@shared/schema";
+import { pregnancyWeeks, symptomsTable, blogPosts } from "@faladha/shared/schema";
 
 export async function getPublishedWeeks() {
   return db

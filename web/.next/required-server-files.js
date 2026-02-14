@@ -296,7 +296,7 @@ self.__SERVER_FILES_MANIFEST={
     ],
     "turbopack": {
       "resolveAlias": {
-        "@shared": "/home/runner/workspace/shared"
+        "@faladha/shared": "/home/runner/workspace/shared"
       },
       "root": "/home/runner/workspace"
     },
