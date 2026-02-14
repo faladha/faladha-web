@@ -3,14 +3,5 @@
     "x-nextjs-stale-time": "300",
     "x-nextjs-prerender": "1",
     "x-next-cache-tags": "_N_T_/layout,_N_T_/pregnancy/layout,_N_T_/pregnancy/[weekSlug]/layout,_N_T_/pregnancy/[weekSlug]/page,_N_T_/pregnancy/week-39"
-  },
-  "segmentPaths": [
-    "/_tree",
-    "/_full",
-    "/pregnancy/$d$weekSlug/__PAGE__",
-    "/pregnancy/$d$weekSlug",
-    "/pregnancy",
-    "/_index",
-    "/_head"
-  ]
+  }
 }
