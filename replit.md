@@ -62,15 +62,17 @@ web/                          # NEW: Next.js App Router (public pages)
       constants.ts            # SITE_URL, SITE_NAME, SITE_DESCRIPTION
   next.config.js              # Rewrites to Express admin, Turbopack + webpack aliases
   tailwind.config.ts          # Purple theme config
-  tsconfig.json               # Path aliases: @/* and @shared/*
+  tsconfig.json               # Path aliases: @/* and @faladha/shared/*
 client/src/                   # LEGACY: Vite SPA (admin dashboard)
   pages/admin/                # Admin CMS pages
   components/, lib/, data/
 server/
+  package.json                # Workspace: @faladha/server (type: module)
   routes.ts                   # API routes: auth, admin CRUD, public API
   storage.ts                  # DatabaseStorage class
   auth.ts, db.ts, seed.ts, vite.ts
 shared/
+  package.json                # Workspace: @faladha/shared (drizzle-orm, drizzle-zod, zod)
   schema.ts                   # Drizzle ORM schema (shared between Next.js and Express)
 ```
 
@@ -140,12 +142,18 @@ shared/
 - JSON-LD: FAQPage, BreadcrumbList, WebApplication, Organization, WebSite schemas
 - Sitemap dynamically generated from database with lastmod timestamps
 
+### Monorepo Workspaces
+- Root package.json defines npm workspaces: ["web", "shared", "server"]
+- `@faladha/shared` provides drizzle-orm, drizzle-zod, zod to all packages
+- web imports schema via `@faladha/shared/schema` (not `../shared/`)
+- `npm run build:web` from root builds the Next.js app
+
 ### Running the Project
 - **Current (Express + Vite)**: `npm run dev` starts Express on port 5000
 - **Next.js (public pages)**: `cd web && npx next dev -p 5000 --hostname 0.0.0.0`
 - **Both together**: `bash start-all.sh` (Express on 5001, Next.js on 5000)
-- **Build Next.js**: `cd web && npx next build`
-- **Vercel deployment**: Deploy /web with env vars: DATABASE_URL, REVALIDATE_SECRET, SITE_URL
+- **Build Next.js**: `npm run build:web` (from root) or `cd web && npx next build`
+- **Vercel deployment**: Root Directory = repo root, Build Command = `npm run build:web`, Output Dir = `web/.next`, env vars: DATABASE_URL, REVALIDATE_SECRET, SITE_URL
 
 ### Important Notes
 - Hijri calendar conversion is done client-side (no external API)
